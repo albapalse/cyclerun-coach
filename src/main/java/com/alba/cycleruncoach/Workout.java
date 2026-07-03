@@ -8,8 +8,10 @@ public class Workout {
     private final double distanceKm;
     private final int durationMinutes;
     private final int perceivedEffort;
+    private final WorkoutType workoutType;
+    private final CyclePhase cyclePhase;
 
-    public Workout(LocalDate date, double distanceKm, int durationMinutes, int perceivedEffort) {
+    public Workout(LocalDate date, double distanceKm, int durationMinutes, int perceivedEffort, WorkoutType workoutType, CyclePhase cyclePhase) {
         if (date == null) {
             throw new IllegalArgumentException("Date cannot be null");
         }
@@ -26,10 +28,19 @@ public class Workout {
             throw new IllegalArgumentException("Perceived effort must be between 1 and 10");
         }
 
+        if (workoutType == null) {
+            throw new IllegalArgumentException("WorkoutType cannot be null");
+        }
+        if (cyclePhase == null) {
+            throw new IllegalArgumentException("CyclePhase cannot be null");
+        }
+
         this.date = date;
         this.distanceKm = distanceKm;
         this.durationMinutes = durationMinutes;
         this.perceivedEffort = perceivedEffort;
+        this.workoutType = workoutType;
+        this.cyclePhase = cyclePhase;
     }
 
     public LocalDate getDate() {
@@ -48,6 +59,17 @@ public class Workout {
         return perceivedEffort;
     }
 
+    public WorkoutType getWorkoutType() {
+        return workoutType;
+    }
+
+    public CyclePhase getCyclePhase() {
+        return cyclePhase;
+    }
+
+
+
+
     public double calculatePace() {
         return durationMinutes / distanceKm;
     }
@@ -55,4 +77,9 @@ public class Workout {
     public int calculateTrainingLoad() {
         return (int) Math.round(distanceKm * perceivedEffort);
     }
+
+    public boolean isHighIntensity() {
+        return workoutType == WorkoutType.INTERVALS ||  workoutType ==WorkoutType.TEMPO_RUN || perceivedEffort >= 8;
+    }
+
 }

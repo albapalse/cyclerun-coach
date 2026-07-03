@@ -45,10 +45,11 @@ class UserTest {
         });
     }
 
+
     @Test
     void addWorkout_addsWorkoutToUser() {
         User user = new User("Alba", "123");
-        Workout workout = new Workout(LocalDate.of(2026, 7, 1), 10.0, 50, 6);
+        Workout workout = new Workout(LocalDate.of(2026, 7, 1), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
 
         user.addWorkout(workout);
 
@@ -68,7 +69,7 @@ class UserTest {
     @Test
     void addWorkout_throwsException_whenWorkoutAlreadyExists() {
         User user = new User("Alba", "123");
-        Workout workout = new Workout(LocalDate.of(2026, 7, 1), 10.0, 50, 6);
+        Workout workout = new Workout(LocalDate.of(2026, 7, 1), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
 
         user.addWorkout(workout);
 
@@ -80,7 +81,7 @@ class UserTest {
     @Test
     void removeWorkout_removesExistingWorkout() {
         User user = new User("Alba", "123");
-        Workout workout = new Workout(LocalDate.of(2026, 7, 1), 10.0, 50, 6);
+        Workout workout = new Workout(LocalDate.of(2026, 7, 1), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
 
         user.addWorkout(workout);
 
@@ -94,7 +95,7 @@ class UserTest {
     @Test
     void removeWorkout_returnsFalse_whenWorkoutDoesNotExist() {
         User user = new User("Alba", "123");
-        Workout workout = new Workout(LocalDate.of(2026, 7, 1), 10.0, 50, 6);
+        Workout workout = new Workout(LocalDate.of(2026, 7, 1), 10.0, 50, 6 , WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
 
         boolean removed = user.removeWorkout(workout);
 
@@ -106,8 +107,8 @@ class UserTest {
     void calculateTotalKms_returnsCorrectKms() {
         User user = new User("Alba", "123");
 
-        Workout workout1 = new Workout(LocalDate.of(2026, 7, 1), 10.0, 50, 6);
-        Workout workout2 = new Workout(LocalDate.of(2026, 7, 2), 12.0, 60, 5);
+        Workout workout1 = new Workout(LocalDate.of(2026, 7, 1), 10.0, 50, 6,  WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
+        Workout workout2 = new Workout(LocalDate.of(2026, 7, 2), 12.0, 60, 5, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
 
         user.addWorkout(workout1);
         user.addWorkout(workout2);
@@ -120,7 +121,7 @@ class UserTest {
     @Test
     void getWorkouts_returnsCopyOfInternalList() {
         User user = new User("Alba", "123");
-        Workout workout = new Workout(LocalDate.of(2026, 7, 1), 10.0, 50, 6);
+        Workout workout = new Workout(LocalDate.of(2026, 7, 1), 10.0, 50, 6,  WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
 
         user.addWorkout(workout);
 
@@ -129,4 +130,6 @@ class UserTest {
 
         assertEquals(1, user.getWorkouts().size());
     }
+
+
 }
