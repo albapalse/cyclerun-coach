@@ -28,8 +28,9 @@ public class User {
     }
 
     public List<Workout> getWorkouts() {
-        return new ArrayList<>(workouts);
+        return new ArrayList<>(workouts); //returns a COPY of the list
     }
+
 
     public void addWorkout(Workout workout) {
         if (workout == null) {
@@ -59,6 +60,59 @@ public class User {
         }
 
         return totalKms;
+    }
+
+    public int countWorkouts() {
+        return workouts.size();
+    }
+
+
+    public List <Workout> getWorkoutsByType(WorkoutType workoutType) {
+        if (workoutType == null) {
+            throw new IllegalArgumentException("Workout type cannot be null");
+        }
+        List <Workout> totalWorkouts = new ArrayList<>();
+        for (Workout workout : workouts) {
+            if (workout.getWorkoutType() == workoutType) {
+                totalWorkouts.add(workout);
+            }
+        }
+        return totalWorkouts;
+    }
+
+    public List <Workout> getWorkoutsByCyclePhase(CyclePhase cyclePhase) {
+        if (cyclePhase == null) {
+            throw new IllegalArgumentException("Cycle phase cannot be null");
+        }
+        List <Workout> workoutsByCyclePhase = new ArrayList<>();
+        for (Workout workout : workouts) {
+            if (workout.getCyclePhase() == cyclePhase) {
+                workoutsByCyclePhase.add(workout);
+            }
+
+        }
+        return workoutsByCyclePhase;
+    }
+
+    public int countHighIntensityWorkouts() {
+        int totalHighIntensityWorkouts = 0;
+        for (Workout workout : workouts) {
+            if (workout.isHighIntensity()) {
+                totalHighIntensityWorkouts++;
+            }
+        }
+        return totalHighIntensityWorkouts;
+    }
+
+    public double calculateAveragePace()  {
+        if (workouts.isEmpty()) {
+            return 0.0;
+        }
+        double pace = 0;
+        for (Workout workout : workouts) {
+            pace += workout.calculatePace();
+        }
+        return pace / workouts.size();
     }
 
 }
