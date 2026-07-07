@@ -12,28 +12,12 @@ public class Workout {
     private final CyclePhase cyclePhase;
 
     public Workout(LocalDate date, double distanceKm, int durationMinutes, int perceivedEffort, WorkoutType workoutType, CyclePhase cyclePhase) {
-        if (date == null) {
-            throw new IllegalArgumentException("Date cannot be null");
-        }
-
-        if (distanceKm <= 0) {
-            throw new IllegalArgumentException("Distance must be greater than zero");
-        }
-
-        if (durationMinutes <= 0) {
-            throw new IllegalArgumentException("Duration must be greater than zero");
-        }
-
-        if (perceivedEffort < 1 || perceivedEffort > 10) {
-            throw new IllegalArgumentException("Perceived effort must be between 1 and 10");
-        }
-
-        if (workoutType == null) {
-            throw new IllegalArgumentException("WorkoutType cannot be null");
-        }
-        if (cyclePhase == null) {
-            throw new IllegalArgumentException("CyclePhase cannot be null");
-        }
+        validateDate(date);
+        validateDistanceKm(distanceKm);
+        validateDurationMinutes(durationMinutes);
+        validatePerceivedEffort(perceivedEffort);
+        validateWorkoutType(workoutType);
+        validateCyclePhase(cyclePhase);
 
         this.date = date;
         this.distanceKm = distanceKm;
@@ -65,6 +49,42 @@ public class Workout {
 
     public CyclePhase getCyclePhase() {
         return cyclePhase;
+    }
+
+    public void validateDate(LocalDate date) {
+        if (date == null) {
+            throw new IllegalArgumentException("Date cannot be null");
+        }
+    }
+
+    public void validateDistanceKm(double distanceKm) {
+        if (distanceKm <= 0) {
+            throw new IllegalArgumentException("Distance must be greater than zero");
+        }
+    }
+
+    public void validateDurationMinutes(int durationMinutes) {
+        if (durationMinutes <= 0) {
+            throw new IllegalArgumentException("Duration must be greater than zero");
+        }
+    }
+
+    public void validatePerceivedEffort(int perceivedEffort) {
+        if (perceivedEffort < 1 || perceivedEffort > 10) {
+            throw new IllegalArgumentException("Perceived effort must be between 1 and 10");
+        }
+    }
+
+    public void validateWorkoutType(WorkoutType workoutType) {
+        if (workoutType == null) {
+            throw new IllegalArgumentException("WorkoutType cannot be null");
+        }
+    }
+
+    public void validateCyclePhase(CyclePhase cyclePhase) {
+        if (cyclePhase == null) {
+            throw new IllegalArgumentException("CyclePhase cannot be null");
+        }
     }
 
 

@@ -10,14 +10,8 @@ public class User {
     private final String password;
 
     public User(String username, String password) {
-        if (username == null || username.isBlank()) {
-            throw new IllegalArgumentException("Username cannot be null or blank");
-        }
-
-        if (password == null || password.isBlank()) {
-            throw new IllegalArgumentException("Password cannot be null or blank");
-        }
-
+        validateUser(username);
+        validatePassword(password);
         this.workouts = new ArrayList<>();
         this.username = username;
         this.password = password;
@@ -27,12 +21,15 @@ public class User {
         return username;
     }
 
+
     public List<Workout> getWorkouts() {
         return new ArrayList<>(workouts); //returns a COPY of the list
     }
 
 
     public void addWorkout(Workout workout) {
+        validateWorkout(workout);
+
         if (workout == null) {
             throw new IllegalArgumentException("Workout cannot be null");
         }
@@ -45,9 +42,7 @@ public class User {
     }
 
     public boolean removeWorkout(Workout workout) {
-        if (workout == null) {
-            throw new IllegalArgumentException("Workout cannot be null");
-        }
+        validateWorkout(workout);
 
         return workouts.remove(workout);
     }
@@ -92,6 +87,23 @@ public class User {
 
         }
         return workoutsByCyclePhase;
+    }
+    private void validateWorkout(Workout workout) {
+        if (workout == null) {
+            throw new IllegalArgumentException("Workout cannot be null");
+        }
+    }
+
+    public void validateUser(String username) {
+        if (username == null || username.isBlank()) {
+            throw new IllegalArgumentException("Username cannot be null or blank");
+        }
+    }
+
+    public void validatePassword(String password) {
+        if (password == null || password.isBlank()) {
+            throw new IllegalArgumentException("Password cannot be null or blank");
+        }
     }
 
     public int countHighIntensityWorkouts() {
