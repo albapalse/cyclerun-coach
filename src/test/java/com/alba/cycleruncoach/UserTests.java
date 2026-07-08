@@ -2,6 +2,7 @@ package com.alba.cycleruncoach;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.*;
 import java.time.LocalDate;
 import java.util.List;
 
@@ -269,7 +270,131 @@ class UserTest {
         assertEquals(0.0, averagePace, 0.0001);
     }
 
+    @Test
+    void getUsedWorkoutTypes_returnsCorrectTypes() {
+        User user = new User("Alba", "123");
+        Workout easyRun1 = new Workout(
+                LocalDate.of(2026, 7, 1),
+                8.0,
+                48,
+                4,
+                WorkoutType.EASY_RUN,
+                CyclePhase.FOLLICULAR
+        );
+
+        Workout easyRun2 = new Workout(
+                LocalDate.of(2026, 7, 2),
+                6.0,
+                36,
+                4,
+                WorkoutType.EASY_RUN,
+                CyclePhase.FOLLICULAR
+        );
+
+        Workout intervals = new Workout(
+                LocalDate.of(2026, 7, 3),
+                5.0,
+                30,
+                7,
+                WorkoutType.INTERVALS,
+                CyclePhase.OVULATORY
+        );
+        user.addWorkout(easyRun1);
+        user.addWorkout(easyRun2);
+        user.addWorkout(intervals);
+
+        Set<WorkoutType> usedWorkoutTypes = user.getUsedWorkoutTypes();
+
+        assertEquals(2, usedWorkoutTypes.size());
+        assertTrue(usedWorkoutTypes.contains(WorkoutType.EASY_RUN));
+        assertTrue(usedWorkoutTypes.contains(WorkoutType.INTERVALS));
 
 
+    }
 
-}
+    @Test
+    void countWorkoutsByType_returnsCorrectCount() {
+        User user = new User("Alba", "123");
+        Workout easyRun1 = new Workout(
+                LocalDate.of(2026, 7, 1),
+                8.0,
+                48,
+                4,
+                WorkoutType.EASY_RUN,
+                CyclePhase.FOLLICULAR
+        );
+
+        Workout easyRun2 = new Workout(
+                LocalDate.of(2026, 7, 2),
+                6.0,
+                36,
+                4,
+                WorkoutType.EASY_RUN,
+                CyclePhase.FOLLICULAR
+        );
+
+        Workout longRun = new Workout(
+                LocalDate.of(2026, 7, 3),
+                15.0,
+                90,
+                6,
+                WorkoutType.LONG_RUN,
+                CyclePhase.LUTEAL
+        );
+        user.addWorkout(easyRun1);
+        user.addWorkout(easyRun2);
+        user.addWorkout(longRun);
+
+        Map<WorkoutType, Integer> countWorkoutsByType = user.countWorkoutsByType();
+
+        assertEquals(2, countWorkoutsByType.get(WorkoutType.EASY_RUN));
+        assertEquals(1, countWorkoutsByType.get(WorkoutType.LONG_RUN));
+
+    }
+
+    @Test
+    void groupWorkoutsByCyclePhase_returnsCorrectGroup() {
+        User user = new User("Alba", "123");
+
+        Workout follicularWorkout1 = new Workout(
+                LocalDate.of(2026, 7, 1),
+                8.0,
+                48,
+                4,
+                WorkoutType.EASY_RUN,
+                CyclePhase.FOLLICULAR
+        );
+
+        Workout follicularWorkout2 = new Workout(
+                LocalDate.of(2026, 7, 2),
+                5.0,
+                30,
+                7,
+                WorkoutType.INTERVALS,
+                CyclePhase.FOLLICULAR
+        );
+
+        Workout lutealWorkout = new Workout(
+                LocalDate.of(2026, 7, 10),
+                6.0,
+                40,
+                6,
+                WorkoutType.RECOVERY_RUN,
+                CyclePhase.LUTEAL
+        );
+
+        user.addWorkout(follicularWorkout1);
+        user.addWorkout(follicularWorkout2);
+        user.addWorkout(lutealWorkout);
+
+        Map<CyclePhase, List<Workout>> groupWorkoutsByCyclePhase = user.groupWorkoutsByCyclePhase();
+
+        assertEquals(2, groupWorkoutsByCyclePhase.get(CyclePhase.FOLLICULAR).size());
+        assertEquals(1, groupWorkoutsByCyclePhase.get(CyclePhase.LUTEAL).size());
+
+        assertTrue(groupWorkoutsByCyclePhase.get(CyclePhase.LUTEAL).contains(lutealWorkout));
+        assertTrue(groupWorkoutsByCyclePhase.get(CyclePhase.FOLLICULAR).contains(follicularWorkout1));
+        assertTrue(groupWorkoutsByCyclePhase.get(CyclePhase.FOLLICULAR).contains(follicularWorkout2));
+
+    }
+    }
