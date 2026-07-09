@@ -1,6 +1,7 @@
 package com.alba.cycleruncoach;
 
 import java.time.LocalDate;
+import java.util.Objects;
 
 public class Workout {
 
@@ -88,8 +89,6 @@ public class Workout {
     }
 
 
-
-
     public double calculatePace() {
         return durationMinutes / distanceKm;
     }
@@ -99,7 +98,43 @@ public class Workout {
     }
 
     public boolean isHighIntensity() {
-        return workoutType == WorkoutType.INTERVALS ||  workoutType ==WorkoutType.TEMPO_RUN || perceivedEffort >= 8;
+        return workoutType == WorkoutType.INTERVALS || workoutType == WorkoutType.TEMPO_RUN || perceivedEffort >= 8;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        // Same object in memory.
+        if (this == o) {
+            return true;
+        }
+
+        // Null or different class.
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+
+        // Safe cast after checking the class.
+        Workout workout = (Workout) o;
+
+        // Logical equality: same relevant attributes.
+        return Double.compare(workout.distanceKm, distanceKm) == 0
+                && durationMinutes == workout.durationMinutes
+                && perceivedEffort == workout.perceivedEffort
+                && Objects.equals(date, workout.date)
+                && workoutType == workout.workoutType
+                && cyclePhase == workout.cyclePhase;
+    }
+
+    @Override
+    public int hashCode() {
+        // Must use the same attributes as equals().
+        return Objects.hash(
+                date,
+                distanceKm,
+                durationMinutes,
+                perceivedEffort,
+                workoutType,
+                cyclePhase
+        );
+    }
 }

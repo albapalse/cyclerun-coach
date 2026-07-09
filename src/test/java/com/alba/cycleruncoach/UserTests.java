@@ -397,4 +397,18 @@ class UserTest {
         assertTrue(groupWorkoutsByCyclePhase.get(CyclePhase.FOLLICULAR).contains(follicularWorkout2));
 
     }
+
+    @Test
+    void addWorkout_throwsException_whenEquivalentWorkoutAlreadyExists() {
+        User user = new User("Alba", "123");
+        Workout workout1 = new Workout(LocalDate.of(2026,7,11),18,95,7,WorkoutType.LONG_RUN,CyclePhase.FOLLICULAR);
+        Workout workout2 = new Workout(LocalDate.of(2026,7,11),18,95,7,WorkoutType.LONG_RUN,CyclePhase.FOLLICULAR);
+
+        user.addWorkout(workout1);
+
+        assertThrows(IllegalArgumentException.class, () -> user.addWorkout(workout2));
+    }
+
+
+
     }

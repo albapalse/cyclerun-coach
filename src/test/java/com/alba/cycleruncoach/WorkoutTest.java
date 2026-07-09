@@ -3,6 +3,8 @@ package com.alba.cycleruncoach;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -143,6 +145,46 @@ class WorkoutTest {
         assertThrows(IllegalArgumentException.class, () -> {
             new Workout(LocalDate.of(2026,7,1), 10.0, 60, 5, WorkoutType.INTERVALS, null);
         });
+
+    }
+
+    @Test
+    void equals_returnsTrue() {
+        Workout workout1 = new Workout(LocalDate.of(2026,7,9),12,70,8,WorkoutType.INTERVALS,CyclePhase.LUTEAL);
+        Workout workout2 = new Workout(LocalDate.of(2026,7,9),12,70,8,WorkoutType.INTERVALS,CyclePhase.LUTEAL);
+
+        assertEquals(workout1, workout2);
+
+    }
+
+    @Test
+    void equals_returnsFalse() {
+        Workout workout1 = new Workout(LocalDate.of(2026,7,6),12,75,8,WorkoutType.INTERVALS,CyclePhase.LUTEAL);
+        Workout workout2 = new Workout(LocalDate.of(2026,7,9),12,70,9,WorkoutType.INTERVALS,CyclePhase.LUTEAL);
+
+        assertNotEquals(workout1, workout2);
+
+    }
+    @Test
+    void hashCode_returnsSameValue_whenWorkoutsAreEqual() {
+        Workout workout1 = new Workout(LocalDate.of(2026,7,9),12,70,8,WorkoutType.INTERVALS,CyclePhase.LUTEAL);
+        Workout workout2 = new Workout(LocalDate.of(2026,7,9),12,70,8,WorkoutType.INTERVALS,CyclePhase.LUTEAL);
+
+        assertEquals(workout1.hashCode(), workout2.hashCode());
+
+    }
+
+    @Test
+    void hashSet_keepsOnlyOneWorkout() {
+
+        Workout workout1 = new Workout(LocalDate.of(2026,7,9),12,70,8,WorkoutType.INTERVALS,CyclePhase.LUTEAL);
+        Workout workout2 = new Workout(LocalDate.of(2026,7,9),12,70,8,WorkoutType.INTERVALS,CyclePhase.LUTEAL);
+
+        Set<Workout> workouts = new HashSet<>();
+        workouts.add(workout1);
+        workouts.add(workout2);
+
+        assertEquals(1,workouts.size());
 
     }
 
