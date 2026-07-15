@@ -31,7 +31,7 @@ public class Workout {
         this.cyclePhase = cyclePhase;
     }
 
-    public long getId() { return id; }
+    public Long getId() { return id; }
 
     public LocalDate getDate() {
         return date;
