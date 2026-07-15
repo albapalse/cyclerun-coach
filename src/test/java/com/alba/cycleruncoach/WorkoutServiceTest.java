@@ -13,7 +13,7 @@ class WorkoutServiceTest {
         User user = new User("Alba", "123");
         WorkoutService workoutService = new WorkoutService();
 
-        Workout workout = new Workout(
+        Workout workout = new Workout(111L,
                 LocalDate.of(2026, 7, 1),
                 8.0,
                 48,
@@ -32,7 +32,7 @@ class WorkoutServiceTest {
     void registerWorkout_throwsException_whenUserIsNull() {
         WorkoutService workoutService = new WorkoutService();
 
-        Workout workout = new Workout(
+        Workout workout = new Workout(111L,
                 LocalDate.of(2026, 7, 1),
                 8.0,
                 48,
@@ -52,7 +52,7 @@ class WorkoutServiceTest {
         User user = new User("Alba", "123");
         WorkoutService workoutService = new WorkoutService();
 
-        Workout workout1 = new Workout(
+        Workout workout1 = new Workout(222L,
                 LocalDate.of(2026, 7, 1),
                 8.0,
                 48,
@@ -61,7 +61,7 @@ class WorkoutServiceTest {
                 CyclePhase.FOLLICULAR
         );
 
-        Workout workout2 = new Workout(
+        Workout workout2 = new Workout(333L,
                 LocalDate.of(2026, 7, 2),
                 10.0,
                 65,
@@ -70,7 +70,7 @@ class WorkoutServiceTest {
                 CyclePhase.FOLLICULAR
         );
 
-        Workout workout3 = new Workout(
+        Workout workout3 = new Workout(444L,
                 LocalDate.of(2026, 7, 3),
                 8.0,
                 48,
@@ -96,7 +96,7 @@ class WorkoutServiceTest {
         User user = new User("Alba", "123");
         WorkoutService workoutService = new WorkoutService();
 
-        Workout workout1 = new Workout(
+        Workout workout1 = new Workout(222L,
                 LocalDate.of(2026, 7, 1),
                 8.0,
                 48,
@@ -105,7 +105,7 @@ class WorkoutServiceTest {
                 CyclePhase.FOLLICULAR
         );
 
-        Workout workout2 = new Workout(
+        Workout workout2 = new Workout(333L,
                 LocalDate.of(2026, 7, 2),
                 10.0,
                 65,
@@ -114,7 +114,7 @@ class WorkoutServiceTest {
                 CyclePhase.FOLLICULAR
         );
 
-        Workout workout3 = new Workout(
+        Workout workout3 = new Workout(444L,
                 LocalDate.of(2026, 7, 3),
                 8.0,
                 48,
@@ -140,7 +140,7 @@ class WorkoutServiceTest {
         User user = new User("Alba", "123");
         WorkoutService workoutService = new WorkoutService();
 
-        Workout workout1 = new Workout(
+        Workout workout1 = new Workout(555L,
                 LocalDate.of(2026, 7, 1),
                 8.0,
                 48,
@@ -149,7 +149,7 @@ class WorkoutServiceTest {
                 CyclePhase.FOLLICULAR
         );
 
-        Workout workout2 = new Workout(
+        Workout workout2 = new Workout(666L,
                 LocalDate.of(2026, 7, 2),
                 10.0,
                 65,
@@ -158,7 +158,7 @@ class WorkoutServiceTest {
                 CyclePhase.FOLLICULAR
         );
 
-        Workout workout3 = new Workout(
+        Workout workout3 = new Workout(777L,
                 LocalDate.of(2026, 7, 3),
                 8.0,
                 48,

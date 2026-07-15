@@ -11,8 +11,10 @@ public class Workout {
     private final int perceivedEffort;
     private final WorkoutType workoutType;
     private final CyclePhase cyclePhase;
+    private final Long id;
 
-    public Workout(LocalDate date, double distanceKm, int durationMinutes, int perceivedEffort, WorkoutType workoutType, CyclePhase cyclePhase) {
+    public Workout(Long id, LocalDate date, double distanceKm, int durationMinutes, int perceivedEffort, WorkoutType workoutType, CyclePhase cyclePhase) {
+        validateId(id);
         validateDate(date);
         validateDistanceKm(distanceKm);
         validateDurationMinutes(durationMinutes);
@@ -20,6 +22,7 @@ public class Workout {
         validateWorkoutType(workoutType);
         validateCyclePhase(cyclePhase);
 
+        this.id = id;
         this.date = date;
         this.distanceKm = distanceKm;
         this.durationMinutes = durationMinutes;
@@ -27,6 +30,8 @@ public class Workout {
         this.workoutType = workoutType;
         this.cyclePhase = cyclePhase;
     }
+
+    public long getId() { return id; }
 
     public LocalDate getDate() {
         return date;
@@ -50,6 +55,12 @@ public class Workout {
 
     public CyclePhase getCyclePhase() {
         return cyclePhase;
+    }
+
+    private void validateId(Long id) {
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("Id must be greater than zero");
+        }
     }
 
     public void validateDate(LocalDate date) {

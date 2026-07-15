@@ -50,7 +50,7 @@ class UserTest {
     @Test
     void addWorkout_addsWorkoutToUser() {
         User user = new User("Alba", "123");
-        Workout workout = new Workout(LocalDate.of(2026, 7, 1), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
+        Workout workout = new Workout(111L, LocalDate.of(2026, 7, 1), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
 
         user.addWorkout(workout);
 
@@ -70,7 +70,7 @@ class UserTest {
     @Test
     void addWorkout_throwsException_whenWorkoutAlreadyExists() {
         User user = new User("Alba", "123");
-        Workout workout = new Workout(LocalDate.of(2026, 7, 1), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
+        Workout workout = new Workout(111L, LocalDate.of(2026, 7, 1), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
 
         user.addWorkout(workout);
 
@@ -82,7 +82,7 @@ class UserTest {
     @Test
     void removeWorkout_removesExistingWorkout() {
         User user = new User("Alba", "123");
-        Workout workout = new Workout(LocalDate.of(2026, 7, 1), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
+        Workout workout = new Workout(111L, LocalDate.of(2026, 7, 1), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
 
         user.addWorkout(workout);
 
@@ -96,7 +96,7 @@ class UserTest {
     @Test
     void removeWorkout_returnsFalse_whenWorkoutDoesNotExist() {
         User user = new User("Alba", "123");
-        Workout workout = new Workout(LocalDate.of(2026, 7, 1), 10.0, 50, 6 , WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
+        Workout workout = new Workout(111L, LocalDate.of(2026, 7, 1), 10.0, 50, 6 , WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
 
         boolean removed = user.removeWorkout(workout);
 
@@ -108,8 +108,8 @@ class UserTest {
     void calculateTotalKms_returnsCorrectKms() {
         User user = new User("Alba", "123");
 
-        Workout workout1 = new Workout(LocalDate.of(2026, 7, 1), 10.0, 50, 6,  WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
-        Workout workout2 = new Workout(LocalDate.of(2026, 7, 2), 12.0, 60, 5, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
+        Workout workout1 = new Workout(111L, LocalDate.of(2026, 7, 1), 10.0, 50, 6,  WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
+        Workout workout2 = new Workout(122L, LocalDate.of(2026, 7, 2), 12.0, 60, 5, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
 
         user.addWorkout(workout1);
         user.addWorkout(workout2);
@@ -122,7 +122,7 @@ class UserTest {
     @Test
     void getWorkouts_returnsCopyOfInternalList() {
         User user = new User("Alba", "123");
-        Workout workout = new Workout(LocalDate.of(2026, 7, 1), 10.0, 50, 6,  WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
+        Workout workout = new Workout(111L, LocalDate.of(2026, 7, 1), 10.0, 50, 6,  WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
 
         user.addWorkout(workout);
 
@@ -136,8 +136,8 @@ class UserTest {
     void countWorkouts_returnsCorrectCount() {
         User user = new User("Alba", "123");
 
-        Workout workout1 = new Workout(LocalDate.of(2026, 07, 01), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
-        Workout workout2 = new Workout(LocalDate.of(2026, 07, 02), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
+        Workout workout1 = new Workout(111L, LocalDate.of(2026, 07, 02), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
+        Workout workout2 = new Workout(123L, LocalDate.of(2026, 07, 02), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
         user.addWorkout(workout1);
         user.addWorkout(workout2);
 
@@ -147,8 +147,8 @@ class UserTest {
     @Test
     void getWorkoutsByType_returnsCorrectList() {
         User user = new User("Alba", "123");
-        Workout workout1 = new Workout(LocalDate.of(2026, 07, 01), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
-        Workout workout2 = new Workout(LocalDate.of(2026, 07, 02), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
+        Workout workout1 = new Workout(111L, LocalDate.of(2026, 07, 01), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
+        Workout workout2 = new Workout(123L, LocalDate.of(2026, 07, 02), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
 
         user.addWorkout(workout1);
         user.addWorkout(workout2);
@@ -161,7 +161,7 @@ class UserTest {
     void getWorkoutsByType_returnsOnlyWorkoutsOfGivenType() {
         User user = new User("Alba", "123");
 
-        Workout easyRun = new Workout(
+        Workout easyRun = new Workout(123L,
                 LocalDate.of(2026, 7, 1),
                 8.0,
                 48,
@@ -170,7 +170,7 @@ class UserTest {
                 CyclePhase.FOLLICULAR
         );
 
-        Workout longRun = new Workout(
+        Workout longRun = new Workout(345L,
                 LocalDate.of(2026, 7, 2),
                 15.0,
                 90,
@@ -201,7 +201,7 @@ class UserTest {
     void getWorkoutsByCyclePhase_returnsOnlyWorkoutsOfGivenCyclePhase() {
         User user = new User("Alba", "123");
 
-        Workout follicularWorkout = new Workout(
+        Workout follicularWorkout = new Workout(234L,
                 LocalDate.of(2026, 7, 1),
                 10.0,
                 50,
@@ -210,7 +210,7 @@ class UserTest {
                 CyclePhase.FOLLICULAR
         );
 
-        Workout ovulatoryWorkout = new Workout(
+        Workout ovulatoryWorkout = new Workout(222L,
                 LocalDate.of(2026, 7, 2),
                 10.0,
                 50,
@@ -239,8 +239,8 @@ class UserTest {
     @Test
     void countHighIntensityWorkouts_returnsCorrectCount() {
         User user = new User("Alba", "123");
-        Workout workout1 = new Workout(LocalDate.of(2026, 07, 01), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
-        Workout workout2 = new Workout(LocalDate.of(2026, 07, 02), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.OVULATORY);
+        Workout workout1 = new Workout(123L, LocalDate.of(2026, 07, 01), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
+        Workout workout2 = new Workout(122L, LocalDate.of(2026, 07, 02), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.OVULATORY);
 
         user.addWorkout(workout1);
         user.addWorkout(workout2);
@@ -253,8 +253,8 @@ class UserTest {
     @Test
     void calculateAveragePace_returnsCorrectAveragePace() {
         User user = new User("Alba", "123");
-        Workout workout1 = new Workout(LocalDate.of(2026, 07, 01), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
-        Workout workout2 = new Workout(LocalDate.of(2026, 07, 02), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.OVULATORY);
+        Workout workout1 = new Workout(111L, LocalDate.of(2026, 07, 01), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
+        Workout workout2 = new Workout(123L, LocalDate.of(2026, 07, 02), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.OVULATORY);
 
         user.addWorkout(workout1);
         user.addWorkout(workout2);
@@ -273,7 +273,7 @@ class UserTest {
     @Test
     void getUsedWorkoutTypes_returnsCorrectTypes() {
         User user = new User("Alba", "123");
-        Workout easyRun1 = new Workout(
+        Workout easyRun1 = new Workout(111L,
                 LocalDate.of(2026, 7, 1),
                 8.0,
                 48,
@@ -282,7 +282,7 @@ class UserTest {
                 CyclePhase.FOLLICULAR
         );
 
-        Workout easyRun2 = new Workout(
+        Workout easyRun2 = new Workout(123L,
                 LocalDate.of(2026, 7, 2),
                 6.0,
                 36,
@@ -291,7 +291,7 @@ class UserTest {
                 CyclePhase.FOLLICULAR
         );
 
-        Workout intervals = new Workout(
+        Workout intervals = new Workout(333L,
                 LocalDate.of(2026, 7, 3),
                 5.0,
                 30,
@@ -315,7 +315,7 @@ class UserTest {
     @Test
     void countWorkoutsByType_returnsCorrectCount() {
         User user = new User("Alba", "123");
-        Workout easyRun1 = new Workout(
+        Workout easyRun1 = new Workout(111L,
                 LocalDate.of(2026, 7, 1),
                 8.0,
                 48,
@@ -324,7 +324,7 @@ class UserTest {
                 CyclePhase.FOLLICULAR
         );
 
-        Workout easyRun2 = new Workout(
+        Workout easyRun2 = new Workout(222L,
                 LocalDate.of(2026, 7, 2),
                 6.0,
                 36,
@@ -333,7 +333,7 @@ class UserTest {
                 CyclePhase.FOLLICULAR
         );
 
-        Workout longRun = new Workout(
+        Workout longRun = new Workout(333L,
                 LocalDate.of(2026, 7, 3),
                 15.0,
                 90,
@@ -356,7 +356,7 @@ class UserTest {
     void groupWorkoutsByCyclePhase_returnsCorrectGroup() {
         User user = new User("Alba", "123");
 
-        Workout follicularWorkout1 = new Workout(
+        Workout follicularWorkout1 = new Workout(111L,
                 LocalDate.of(2026, 7, 1),
                 8.0,
                 48,
@@ -365,7 +365,7 @@ class UserTest {
                 CyclePhase.FOLLICULAR
         );
 
-        Workout follicularWorkout2 = new Workout(
+        Workout follicularWorkout2 = new Workout(222L,
                 LocalDate.of(2026, 7, 2),
                 5.0,
                 30,
@@ -374,7 +374,7 @@ class UserTest {
                 CyclePhase.FOLLICULAR
         );
 
-        Workout lutealWorkout = new Workout(
+        Workout lutealWorkout = new Workout(333L,
                 LocalDate.of(2026, 7, 10),
                 6.0,
                 40,
@@ -401,8 +401,8 @@ class UserTest {
     @Test
     void addWorkout_throwsException_whenEquivalentWorkoutAlreadyExists() {
         User user = new User("Alba", "123");
-        Workout workout1 = new Workout(LocalDate.of(2026,7,11),18,95,7,WorkoutType.LONG_RUN,CyclePhase.FOLLICULAR);
-        Workout workout2 = new Workout(LocalDate.of(2026,7,11),18,95,7,WorkoutType.LONG_RUN,CyclePhase.FOLLICULAR);
+        Workout workout1 = new Workout(111L, LocalDate.of(2026,7,11),18,95,7,WorkoutType.LONG_RUN,CyclePhase.FOLLICULAR);
+        Workout workout2 = new Workout(222L, LocalDate.of(2026,7,11),18,95,7,WorkoutType.LONG_RUN,CyclePhase.FOLLICULAR);
 
         user.addWorkout(workout1);
 
