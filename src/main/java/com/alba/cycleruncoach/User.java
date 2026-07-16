@@ -1,10 +1,10 @@
 package com.alba.cycleruncoach;
-import java.util.HashSet;
 import java.util.Set;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class User {
 
@@ -33,10 +33,6 @@ public class User {
     public void addWorkout(Workout workout) {
         validateWorkout(workout);
 
-        if (workout == null) {
-            throw new IllegalArgumentException("Workout cannot be null");
-        }
-
         if (workouts.contains(workout)) {
             throw new IllegalArgumentException("Workout already exists");
         }
@@ -51,13 +47,17 @@ public class User {
     }
 
     public double calculateTotalKms() {
-        double totalKms = 0;
+      /*  double totalKms = 0;
 
         for (Workout workout : workouts) {
             totalKms += workout.getDistanceKm();
         }
 
-        return totalKms;
+        return totalKms; */
+
+        return workouts.stream()
+                .mapToDouble(workout -> workout.getDistanceKm())
+                .sum();
     }
 
     public int countWorkouts() {
@@ -66,7 +66,7 @@ public class User {
 
 
     public List<Workout> getWorkoutsByType(WorkoutType workoutType) {
-        if (workoutType == null) {
+   /*     if (workoutType == null) {
             throw new IllegalArgumentException("Workout type cannot be null");
         }
         List<Workout> totalWorkouts = new ArrayList<>();
@@ -76,6 +76,12 @@ public class User {
             }
         }
         return totalWorkouts;
+    } */
+        if (workoutType == null) {
+            throw new IllegalArgumentException("Workout type cannot be null");
+        }
+        return workouts.stream().filter(workout -> workout.getWorkoutType() == workoutType).toList();
+
     }
 
     public List<Workout> getWorkoutsByCyclePhase(CyclePhase cyclePhase) {
@@ -92,32 +98,52 @@ public class User {
         return workoutsByCyclePhase;
     }
 
+    public List<Workout> getLongRunWorkouts(double minimumDistanceKm) {
+        if (minimumDistanceKm <= 0) {
+            throw new IllegalArgumentException("Minimum distance must be greater than zero");
+        }
+
+        return workouts.stream()
+                .filter(workout -> workout.getDistanceKm() >= minimumDistanceKm)
+                .toList();
+    }
+
+    public List<Workout> getWorkoutsSortedByDate() {
+        return workouts.stream()
+                .sorted((workout1, workout2) -> workout1.getDate().compareTo(workout2.getDate()))
+                .toList();
+    }
+
     private void validateWorkout(Workout workout) {
         if (workout == null) {
             throw new IllegalArgumentException("Workout cannot be null");
         }
     }
 
-    public void validateUser(String username) {
+    private void validateUser(String username) {
         if (username == null || username.isBlank()) {
             throw new IllegalArgumentException("Username cannot be null or blank");
         }
     }
 
-    public void validatePassword(String password) {
+    private void validatePassword(String password) {
         if (password == null || password.isBlank()) {
             throw new IllegalArgumentException("Password cannot be null or blank");
         }
     }
 
     public int countHighIntensityWorkouts() {
-        int totalHighIntensityWorkouts = 0;
+    /*    int totalHighIntensityWorkouts = 0;
         for (Workout workout : workouts) {
             if (workout.isHighIntensity()) {
                 totalHighIntensityWorkouts++;
             }
         }
         return totalHighIntensityWorkouts;
+    } */
+        return (int) workouts.stream()
+                .filter(workout -> workout.isHighIntensity())
+                .count();
     }
 
     public double calculateAveragePace() {
@@ -133,11 +159,13 @@ public class User {
 
 
     public Set<WorkoutType> getUsedWorkoutTypes() {
-        Set<WorkoutType> usedWorkoutTypes = new HashSet<>();
+       /* Set<WorkoutType> usedWorkoutTypes = new HashSet<>();
         for (Workout workout : workouts) {
             usedWorkoutTypes.add(workout.getWorkoutType());
         }
-        return usedWorkoutTypes;
+        return usedWorkoutTypes; */
+
+        return workouts.stream().map(workout -> workout.getWorkoutType()).collect(Collectors.toSet());
     }
 
     public Map<WorkoutType, Integer> countWorkoutsByType() {
@@ -172,4 +200,4 @@ public class User {
     }
 
 
-    }
+}
