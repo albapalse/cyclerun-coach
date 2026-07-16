@@ -136,7 +136,7 @@ class UserTest {
     void countWorkouts_returnsCorrectCount() {
         User user = new User("Alba", "123");
 
-        Workout workout1 = new Workout(111L, LocalDate.of(2026, 07, 02), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
+        Workout workout1 = new Workout(112L, LocalDate.of(2026, 07, 01), 10.0, 52, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
         Workout workout2 = new Workout(123L, LocalDate.of(2026, 07, 02), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
         user.addWorkout(workout1);
         user.addWorkout(workout2);
@@ -402,13 +402,117 @@ class UserTest {
     void addWorkout_throwsException_whenEquivalentWorkoutAlreadyExists() {
         User user = new User("Alba", "123");
         Workout workout1 = new Workout(111L, LocalDate.of(2026,7,11),18,95,7,WorkoutType.LONG_RUN,CyclePhase.FOLLICULAR);
-        Workout workout2 = new Workout(222L, LocalDate.of(2026,7,11),18,95,7,WorkoutType.LONG_RUN,CyclePhase.FOLLICULAR);
+        Workout workout2 = new Workout(111L, LocalDate.of(2026,7,11),18,95,7,WorkoutType.LONG_RUN,CyclePhase.FOLLICULAR);
 
         user.addWorkout(workout1);
 
         assertThrows(IllegalArgumentException.class, () -> user.addWorkout(workout2));
     }
+    @Test
+    void getWorkoutsSortedByDate_returnsWorkoutsOrderedByDate() {
+        User user = new User("Alba", "123");
 
+        Workout workout1 = new Workout(
+                111L,
+                LocalDate.of(2026, 7, 3),
+                8.0,
+                48,
+                7,
+                WorkoutType.EASY_RUN,
+                CyclePhase.FOLLICULAR
+        );
 
+        Workout workout2 = new Workout(
+                222L,
+                LocalDate.of(2026, 7, 1),
+                10.0,
+                65,
+                8,
+                WorkoutType.LONG_RUN,
+                CyclePhase.FOLLICULAR
+        );
 
+        Workout workout3 = new Workout(
+                333L,
+                LocalDate.of(2026, 7, 2),
+                6.0,
+                36,
+                5,
+                WorkoutType.RECOVERY_RUN,
+                CyclePhase.LUTEAL
+        );
+
+        user.addWorkout(workout1);
+        user.addWorkout(workout2);
+        user.addWorkout(workout3);
+
+        List<Workout> sortedWorkouts = user.getWorkoutsSortedByDate();
+
+        assertEquals(workout2, sortedWorkouts.get(0));
+        assertEquals(workout3, sortedWorkouts.get(1));
+        assertEquals(workout1, sortedWorkouts.get(2));
     }
+
+    @Test
+    void getLongRunWorkouts_returnsWorkoutsWithDistanceGreaterOrEqualThanMinimum() {
+        User user = new User("Alba", "123");
+
+        Workout shortWorkout = new Workout(
+                111L,
+                LocalDate.of(2026, 7, 1),
+                5.0,
+                30,
+                4,
+                WorkoutType.EASY_RUN,
+                CyclePhase.FOLLICULAR
+        );
+
+        Workout exactMinimumWorkout = new Workout(
+                222L,
+                LocalDate.of(2026, 7, 2),
+                10.0,
+                60,
+                5,
+                WorkoutType.EASY_RUN,
+                CyclePhase.FOLLICULAR
+        );
+
+        Workout longWorkout = new Workout(
+                333L,
+                LocalDate.of(2026, 7, 3),
+                12.0,
+                70,
+                6,
+                WorkoutType.LONG_RUN,
+                CyclePhase.LUTEAL
+        );
+
+        user.addWorkout(shortWorkout);
+        user.addWorkout(exactMinimumWorkout);
+        user.addWorkout(longWorkout);
+
+        List<Workout> longRunWorkouts = user.getLongRunWorkouts(10.0);
+
+        assertEquals(2, longRunWorkouts.size());
+        assertTrue(longRunWorkouts.contains(exactMinimumWorkout));
+        assertTrue(longRunWorkouts.contains(longWorkout));
+        assertFalse(longRunWorkouts.contains(shortWorkout));
+    }
+    @Test
+    void getLongRunWorkouts_throwsException_whenMinimumDistanceIsZero() {
+        User user = new User("Alba", "123");
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            user.getLongRunWorkouts(0.0);
+        });
+    }
+    @Test
+    void getLongRunWorkouts_throwsException_whenMinimumDistanceIsNegative() {
+        User user = new User("Alba", "123");
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            user.getLongRunWorkouts(-5.0);
+        });
+    }
+
+}
