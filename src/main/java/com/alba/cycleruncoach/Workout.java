@@ -63,37 +63,37 @@ public class Workout {
         }
     }
 
-    public void validateDate(LocalDate date) {
+    private void validateDate(LocalDate date) {
         if (date == null) {
             throw new IllegalArgumentException("Date cannot be null");
         }
     }
 
-    public void validateDistanceKm(double distanceKm) {
+    private void validateDistanceKm(double distanceKm) {
         if (distanceKm <= 0) {
             throw new IllegalArgumentException("Distance must be greater than zero");
         }
     }
 
-    public void validateDurationMinutes(int durationMinutes) {
+    private void validateDurationMinutes(int durationMinutes) {
         if (durationMinutes <= 0) {
             throw new IllegalArgumentException("Duration must be greater than zero");
         }
     }
 
-    public void validatePerceivedEffort(int perceivedEffort) {
+    private void validatePerceivedEffort(int perceivedEffort) {
         if (perceivedEffort < 1 || perceivedEffort > 10) {
             throw new IllegalArgumentException("Perceived effort must be between 1 and 10");
         }
     }
 
-    public void validateWorkoutType(WorkoutType workoutType) {
+    private void validateWorkoutType(WorkoutType workoutType) {
         if (workoutType == null) {
             throw new IllegalArgumentException("WorkoutType cannot be null");
         }
     }
 
-    public void validateCyclePhase(CyclePhase cyclePhase) {
+    private void validateCyclePhase(CyclePhase cyclePhase) {
         if (cyclePhase == null) {
             throw new IllegalArgumentException("CyclePhase cannot be null");
         }

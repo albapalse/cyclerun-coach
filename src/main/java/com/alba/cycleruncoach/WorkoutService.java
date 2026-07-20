@@ -6,7 +6,6 @@ public class WorkoutService {
 
     public void registerWorkout(User user, Workout workout) {
         validateUser(user);
-
         user.addWorkout(workout);
     }
 
