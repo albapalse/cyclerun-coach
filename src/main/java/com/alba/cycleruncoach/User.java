@@ -47,14 +47,6 @@ public class User {
     }
 
     public double calculateTotalKms() {
-      /*  double totalKms = 0;
-
-        for (Workout workout : workouts) {
-            totalKms += workout.getDistanceKm();
-        }
-
-        return totalKms; */
-
         return workouts.stream()
                 .mapToDouble(workout -> workout.getDistanceKm())
                 .sum();
@@ -66,17 +58,6 @@ public class User {
 
 
     public List<Workout> getWorkoutsByType(WorkoutType workoutType) {
-   /*     if (workoutType == null) {
-            throw new IllegalArgumentException("Workout type cannot be null");
-        }
-        List<Workout> totalWorkouts = new ArrayList<>();
-        for (Workout workout : workouts) {
-            if (workout.getWorkoutType() == workoutType) {
-                totalWorkouts.add(workout);
-            }
-        }
-        return totalWorkouts;
-    } */
         if (workoutType == null) {
             throw new IllegalArgumentException("Workout type cannot be null");
         }
@@ -98,7 +79,7 @@ public class User {
         return workoutsByCyclePhase;
     }
 
-    public List<Workout> getLongRunWorkouts(double minimumDistanceKm) {
+    public List<Workout> getWorkoutsByMinimumDistance(double minimumDistanceKm) {
         if (minimumDistanceKm <= 0) {
             throw new IllegalArgumentException("Minimum distance must be greater than zero");
         }
@@ -133,14 +114,6 @@ public class User {
     }
 
     public int countHighIntensityWorkouts() {
-    /*    int totalHighIntensityWorkouts = 0;
-        for (Workout workout : workouts) {
-            if (workout.isHighIntensity()) {
-                totalHighIntensityWorkouts++;
-            }
-        }
-        return totalHighIntensityWorkouts;
-    } */
         return (int) workouts.stream()
                 .filter(workout -> workout.isHighIntensity())
                 .count();
@@ -159,12 +132,6 @@ public class User {
 
 
     public Set<WorkoutType> getUsedWorkoutTypes() {
-       /* Set<WorkoutType> usedWorkoutTypes = new HashSet<>();
-        for (Workout workout : workouts) {
-            usedWorkoutTypes.add(workout.getWorkoutType());
-        }
-        return usedWorkoutTypes; */
-
         return workouts.stream().map(workout -> workout.getWorkoutType()).collect(Collectors.toSet());
     }
 
