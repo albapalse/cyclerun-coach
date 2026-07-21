@@ -241,7 +241,7 @@ class WorkoutServiceTest {
         List<Workout> workouts = workoutService.findAllWorkouts();
         workouts.removeAll(workoutService.findAllWorkouts());
 
-        assertEquals(workoutService.findAllWorkouts().size(), 2);
+        assertEquals(2, workoutService.findAllWorkouts().size());
     }
 
     @Test
@@ -305,7 +305,8 @@ class WorkoutServiceTest {
 
         workoutService.saveWorkout(workout);
 
-        assertTrue( workoutService.deleteWorkoutById(777L));
+        assertTrue(workoutService.deleteWorkoutById(777L));
+        assertNull(workoutService.findWorkoutById(777L));
 
     }
 
