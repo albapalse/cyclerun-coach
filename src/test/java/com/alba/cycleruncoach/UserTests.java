@@ -454,7 +454,7 @@ class UserTest {
     }
 
     @Test
-    void getLongRunWorkouts_returnsWorkoutsWithDistanceGreaterOrEqualThanMinimum() {
+    void getWorkoutsByMinimumDistance_returnsWorkoutsWithDistanceGreaterOrEqualThanMinimum() {
         User user = new User("Alba", "123");
 
         Workout shortWorkout = new Workout(
@@ -491,7 +491,7 @@ class UserTest {
         user.addWorkout(exactMinimumWorkout);
         user.addWorkout(longWorkout);
 
-        List<Workout> longRunWorkouts = user.getLongRunWorkouts(10.0);
+        List<Workout> longRunWorkouts = user.getWorkoutsByMinimumDistance(10.0);
 
         assertEquals(2, longRunWorkouts.size());
         assertTrue(longRunWorkouts.contains(exactMinimumWorkout));
@@ -499,19 +499,19 @@ class UserTest {
         assertFalse(longRunWorkouts.contains(shortWorkout));
     }
     @Test
-    void getLongRunWorkouts_throwsException_whenMinimumDistanceIsZero() {
+    void getWorkoutsByMinimumDistance_throwsException_whenMinimumDistanceIsZero() {
         User user = new User("Alba", "123");
 
         assertThrows(IllegalArgumentException.class, () -> {
-            user.getLongRunWorkouts(0.0);
+            user.getWorkoutsByMinimumDistance(0.0);
         });
     }
     @Test
-    void getLongRunWorkouts_throwsException_whenMinimumDistanceIsNegative() {
+    void getWorkoutsByMinimumDistance_throwsException_whenMinimumDistanceIsNegative() {
         User user = new User("Alba", "123");
 
         assertThrows(IllegalArgumentException.class, () -> {
-            user.getLongRunWorkouts(-5.0);
+            user.getWorkoutsByMinimumDistance(-5.0);
         });
     }
 

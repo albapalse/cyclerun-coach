@@ -4,10 +4,13 @@ import java.util.List;
 
 public class WorkoutService {
 
-    public void registerWorkout(User user, Workout workout) {
-        validateUser(user);
-        user.addWorkout(workout);
+    private final WorkoutRepository workoutRepository;
+
+    public WorkoutService(WorkoutRepository workoutRepository) {
+        validateWorkoutRepository(workoutRepository);
+        this.workoutRepository = workoutRepository;
     }
+
 
     public double calculateTotalDistanceByType(User user, WorkoutType workoutType) {
         validateUser(user);
@@ -43,6 +46,22 @@ public class WorkoutService {
         return totalDistance / workouts.size();
     }
 
+    public void saveWorkout(Workout workout) {
+        workoutRepository.save(workout);
+    }
+
+    public List<Workout> findAllWorkouts() {
+        return workoutRepository.findAll();
+    }
+
+    public Workout findWorkoutById(Long id) {
+        return workoutRepository.findById(id);
+    }
+
+    public boolean deleteWorkoutById(Long id) {
+        return workoutRepository.deleteById(id);
+    }
+
     private void validateUser(User user) {
         if (user == null) {
             throw new IllegalArgumentException("User cannot be null");
@@ -58,6 +77,12 @@ public class WorkoutService {
     private void validateCyclePhase(CyclePhase cyclePhase) {
         if (cyclePhase == null) {
             throw new IllegalArgumentException("Cycle phase cannot be null");
+        }
+    }
+
+    private void validateWorkoutRepository(WorkoutRepository repository) {
+        if (repository == null) {
+            throw new IllegalArgumentException("Repository cannot be null");
         }
     }
 }
