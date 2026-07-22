@@ -1,6 +1,6 @@
 package com.alba.cycleruncoach;
 
-public enum Symptoms {
+public enum Symptom {
     CRAMPS,
     FATIGUE,
     HEADACHE,
