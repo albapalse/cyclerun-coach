@@ -8,9 +8,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class InMemoryDailyCheckInRepositoryTest {
+ class InMemoryDailyCheckInRepositoryTest {
 
     private DailyCheckInRepository dailyCheckInRepository;
 
@@ -30,9 +34,9 @@ public class InMemoryDailyCheckInRepositoryTest {
                 7.5
         );
     }
-    
+
     @Test
-    void save_savesDailyCheckIn() {
+    void save_storesDailyCheckIn() {
         DailyCheckIn checkIn = createDailyCheckIn(1L);
         dailyCheckInRepository.save(checkIn);
 
@@ -57,7 +61,7 @@ public class InMemoryDailyCheckInRepositoryTest {
     }
 
     @Test
-    void findById_returnsEmpty_whenDailyCheckInDoesNotExist() {
+    void findAll_returnsEmptyList_whenNoDailyCheckInsExist() {
         Optional<DailyCheckIn> result = dailyCheckInRepository.findById(99L);
 
         assertTrue(result.isEmpty());
