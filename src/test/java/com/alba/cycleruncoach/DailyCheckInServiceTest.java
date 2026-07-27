@@ -21,19 +21,14 @@ class DailyCheckInServiceTest {
 
     @BeforeEach
     void setUp() {
-        dailyCheckInRepository =
-                new InMemoryDailyCheckInRepository();
+        dailyCheckInRepository = new InMemoryDailyCheckInRepository();
 
-        dailyCheckInService =
-                new DailyCheckInService(dailyCheckInRepository);
+        dailyCheckInService = new DailyCheckInService(dailyCheckInRepository);
     }
 
     @Test
     void constructor_throwsException_whenRepositoryIsNull() {
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> new DailyCheckInService(null)
-        );
+        assertThrows(IllegalArgumentException.class, () -> new DailyCheckInService(null));
     }
 
     @Test
@@ -42,19 +37,12 @@ class DailyCheckInServiceTest {
 
         dailyCheckInService.saveDailyCheckIn(checkIn);
 
-        DailyCheckIn storedCheckIn = dailyCheckInRepository
-                .findById(1L)
-                .orElseThrow();
-
-        assertSame(checkIn, storedCheckIn);
+        DailyCheckIn storedCheckIn = dailyCheckInRepository.findById(1L).orElseThrow();assertSame(checkIn, storedCheckIn);
     }
 
     @Test
     void saveDailyCheckIn_throwsException_whenDailyCheckInIsNull() {
-        assertThrows(
-                IllegalArgumentException.class,
-                () -> dailyCheckInService.saveDailyCheckIn(null)
-        );
+        assertThrows(IllegalArgumentException.class, () -> dailyCheckInService.saveDailyCheckIn(null));
     }
 
     @Test
@@ -65,8 +53,7 @@ class DailyCheckInServiceTest {
         dailyCheckInService.saveDailyCheckIn(firstCheckIn);
         dailyCheckInService.saveDailyCheckIn(secondCheckIn);
 
-        List<DailyCheckIn> result =
-                dailyCheckInService.findAllDailyCheckIns();
+        List<DailyCheckIn> result = dailyCheckInService.findAllDailyCheckIns();
 
         assertEquals(2, result.size());
         assertTrue(result.contains(firstCheckIn));
@@ -78,8 +65,7 @@ class DailyCheckInServiceTest {
         DailyCheckIn checkIn = createDailyCheckIn(1L);
         dailyCheckInService.saveDailyCheckIn(checkIn);
 
-        Optional<DailyCheckIn> result =
-                dailyCheckInService.findDailyCheckInById(1L);
+        Optional<DailyCheckIn> result = dailyCheckInService.findDailyCheckInById(1L);
 
         assertTrue(result.isPresent());
         assertSame(checkIn, result.orElseThrow());
@@ -87,8 +73,7 @@ class DailyCheckInServiceTest {
 
     @Test
     void findDailyCheckInById_returnsEmpty_whenItDoesNotExist() {
-        Optional<DailyCheckIn> result =
-                dailyCheckInService.findDailyCheckInById(99L);
+        Optional<DailyCheckIn> result = dailyCheckInService.findDailyCheckInById(99L);
 
         assertTrue(result.isEmpty());
     }
@@ -98,49 +83,33 @@ class DailyCheckInServiceTest {
         DailyCheckIn checkIn = createDailyCheckIn(1L);
         dailyCheckInService.saveDailyCheckIn(checkIn);
 
-        boolean deleted =
-                dailyCheckInService.deleteDailyCheckInById(1L);
+        boolean deleted = dailyCheckInService.deleteDailyCheckInById(1L);
 
         assertTrue(deleted);
-        assertTrue(
-                dailyCheckInService
-                        .findDailyCheckInById(1L)
-                        .isEmpty()
-        );
+        assertTrue(dailyCheckInService.findDailyCheckInById(1L).isEmpty());
     }
 
     @Test
     void deleteDailyCheckInById_returnsFalse_whenItDoesNotExist() {
-        boolean deleted =
-                dailyCheckInService.deleteDailyCheckInById(99L);
+        boolean deleted = dailyCheckInService.deleteDailyCheckInById(99L);
 
         assertFalse(deleted);
     }
 
     @Test
     void findLatestDailyCheckIn_returnsMostRecentCheckIn() {
-        DailyCheckIn oldestCheckIn = createDailyCheckIn(
-                1L,
-                LocalDate.of(2026, 7, 20)
-        );
+        DailyCheckIn oldestCheckIn = createDailyCheckIn(1L, LocalDate.of(2026, 7, 20));
 
-        DailyCheckIn latestCheckIn = createDailyCheckIn(
-                2L,
-                LocalDate.of(2026, 7, 24)
-        );
+        DailyCheckIn latestCheckIn = createDailyCheckIn(2L, LocalDate.of(2026, 7, 24));
 
-        DailyCheckIn middleCheckIn = createDailyCheckIn(
-                3L,
-                LocalDate.of(2026, 7, 22)
-        );
+        DailyCheckIn middleCheckIn = createDailyCheckIn(3L, LocalDate.of(2026, 7, 22));
 
         // Deliberately saved out of chronological order.
         dailyCheckInService.saveDailyCheckIn(latestCheckIn);
         dailyCheckInService.saveDailyCheckIn(oldestCheckIn);
         dailyCheckInService.saveDailyCheckIn(middleCheckIn);
 
-        Optional<DailyCheckIn> result =
-                dailyCheckInService.findLatestDailyCheckIn();
+        Optional<DailyCheckIn> result = dailyCheckInService.findLatestDailyCheckIn();
 
         assertTrue(result.isPresent());
         assertSame(latestCheckIn, result.orElseThrow());
@@ -148,31 +117,19 @@ class DailyCheckInServiceTest {
 
     @Test
     void findLatestDailyCheckIn_returnsEmpty_whenNoCheckInsExist() {
-        Optional<DailyCheckIn> result =
-                dailyCheckInService.findLatestDailyCheckIn();
+        Optional<DailyCheckIn> result = dailyCheckInService.findLatestDailyCheckIn();
 
         assertTrue(result.isEmpty());
     }
 
     private DailyCheckIn createDailyCheckIn(Long id) {
-        return createDailyCheckIn(
-                id,
-                LocalDate.of(2026, 7, 24)
-        );
+        return createDailyCheckIn(id, LocalDate.of(2026, 7, 24));
     }
 
     private DailyCheckIn createDailyCheckIn(
             Long id,
             LocalDate date
     ) {
-        return new DailyCheckIn(
-                id,
-                date,
-                CyclePhase.LUTEAL,
-                EnergyLevel.LOW,
-                SleepQuality.GOOD,
-                Set.of(Symptom.FATIGUE),
-                7.5
-        );
+        return new DailyCheckIn(id, date, CyclePhase.LUTEAL, EnergyLevel.LOW, SleepQuality.GOOD, Set.of(Symptom.FATIGUE), 7.5);
     }
 }

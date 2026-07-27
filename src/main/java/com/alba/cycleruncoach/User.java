@@ -47,9 +47,7 @@ public class User {
     }
 
     public double calculateTotalKms() {
-        return workouts.stream()
-                .mapToDouble(workout -> workout.getDistanceKm())
-                .sum();
+        return workouts.stream().mapToDouble(workout -> workout.getDistanceKm()).sum();
     }
 
     public int countWorkouts() {
@@ -84,15 +82,11 @@ public class User {
             throw new IllegalArgumentException("Minimum distance must be greater than zero");
         }
 
-        return workouts.stream()
-                .filter(workout -> workout.getDistanceKm() >= minimumDistanceKm)
-                .toList();
+        return workouts.stream().filter(workout -> workout.getDistanceKm() >= minimumDistanceKm).toList();
     }
 
     public List<Workout> getWorkoutsSortedByDate() {
-        return workouts.stream()
-                .sorted((workout1, workout2) -> workout1.getDate().compareTo(workout2.getDate()))
-                .toList();
+        return workouts.stream().sorted((workout1, workout2) -> workout1.getDate().compareTo(workout2.getDate())).toList();
     }
 
     private void validateWorkout(Workout workout) {
@@ -114,9 +108,7 @@ public class User {
     }
 
     public int countHighIntensityWorkouts() {
-        return (int) workouts.stream()
-                .filter(workout -> workout.isHighIntensity())
-                .count();
+        return (int) workouts.stream().filter(workout -> workout.isHighIntensity()).count();
     }
 
     public double calculateAveragePace() {

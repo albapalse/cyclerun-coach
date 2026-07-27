@@ -8,9 +8,7 @@ public class DailyCheckInService {
 
     private final DailyCheckInRepository dailyCheckInRepository;
 
-    public DailyCheckInService(
-            DailyCheckInRepository dailyCheckInRepository
-    ) {
+    public DailyCheckInService(DailyCheckInRepository dailyCheckInRepository) {
         validateRepository(dailyCheckInRepository);
         this.dailyCheckInRepository = dailyCheckInRepository;
     }
@@ -32,18 +30,12 @@ public class DailyCheckInService {
     }
 
     public Optional<DailyCheckIn> findLatestDailyCheckIn() {
-        return dailyCheckInRepository.findAll()
-                .stream()
-                .max(Comparator.comparing(DailyCheckIn::getDate));
+        return dailyCheckInRepository.findAll().stream().max(Comparator.comparing(DailyCheckIn::getDate));
     }
 
-    private void validateRepository(
-            DailyCheckInRepository dailyCheckInRepository
-    ) {
+    private void validateRepository(DailyCheckInRepository dailyCheckInRepository) {
         if (dailyCheckInRepository == null) {
-            throw new IllegalArgumentException(
-                    "Daily check-in repository cannot be null"
-            );
+            throw new IllegalArgumentException("Daily check-in repository cannot be null");
         }
     }
 }

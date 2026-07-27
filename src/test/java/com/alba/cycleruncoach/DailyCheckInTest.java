@@ -13,20 +13,15 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DailyCheckInTest {
 
-    private static final LocalDate VALID_DATE =
-            LocalDate.of(2026, 7, 22);
+    private static final LocalDate VALID_DATE = LocalDate.of(2026, 7, 22);
 
-    private static final CyclePhase VALID_CYCLE_PHASE =
-            CyclePhase.LUTEAL;
+    private static final CyclePhase VALID_CYCLE_PHASE = CyclePhase.LUTEAL;
 
-    private static final EnergyLevel VALID_ENERGY_LEVEL =
-            EnergyLevel.LOW;
+    private static final EnergyLevel VALID_ENERGY_LEVEL = EnergyLevel.LOW;
 
-    private static final SleepQuality VALID_SLEEP_QUALITY =
-            SleepQuality.GOOD;
+    private static final SleepQuality VALID_SLEEP_QUALITY = SleepQuality.GOOD;
 
-    private static final Set<Symptom> VALID_SYMPTOMS =
-            Set.of(Symptom.FATIGUE, Symptom.CRAMPS);
+    private static final Set<Symptom> VALID_SYMPTOMS = Set.of(Symptom.FATIGUE, Symptom.CRAMPS);
 
     private static final double VALID_SLEEP_HOURS = 7.5;
 
