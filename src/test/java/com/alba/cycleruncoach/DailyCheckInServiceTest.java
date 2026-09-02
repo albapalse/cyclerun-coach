@@ -37,7 +37,9 @@ class DailyCheckInServiceTest {
 
         dailyCheckInService.saveDailyCheckIn(checkIn);
 
-        DailyCheckIn storedCheckIn = dailyCheckInRepository.findById(1L).orElseThrow();assertSame(checkIn, storedCheckIn);
+        DailyCheckIn storedCheckIn = dailyCheckInRepository.findById(1L).orElseThrow();
+
+        assertSame(checkIn, storedCheckIn);
     }
 
     @Test
@@ -130,6 +132,14 @@ class DailyCheckInServiceTest {
             Long id,
             LocalDate date
     ) {
-        return new DailyCheckIn(id, date, CyclePhase.LUTEAL, EnergyLevel.LOW, SleepQuality.GOOD, Set.of(Symptom.FATIGUE), 7.5);
+        return new DailyCheckIn(
+                id,
+                date,
+                CyclePhase.LUTEAL,
+                EnergyLevel.LOW,
+                SleepQuality.GOOD,
+                Set.of(Symptom.FATIGUE),
+                7.5
+        );
     }
 }

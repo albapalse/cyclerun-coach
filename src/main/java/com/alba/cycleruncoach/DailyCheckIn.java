@@ -12,7 +12,15 @@ public class DailyCheckIn {
     private final Set<Symptom> symptoms;
     private final double sleepHours;
 
-    public DailyCheckIn(Long id, LocalDate date, CyclePhase cyclePhase, EnergyLevel energyLevel, SleepQuality sleepQuality, Set<Symptom> symptoms, double sleepHours) {
+    public DailyCheckIn(
+            Long id,
+            LocalDate date,
+            CyclePhase cyclePhase,
+            EnergyLevel energyLevel,
+            SleepQuality sleepQuality,
+            Set<Symptom> symptoms,
+            double sleepHours
+    ) {
         validateId(id);
         validateDate(date);
         validateCyclePhase(cyclePhase);
@@ -32,9 +40,7 @@ public class DailyCheckIn {
 
     public boolean hasSymptom(Symptom symptom) {
         if (symptom == null) {
-            throw new IllegalArgumentException(
-                    "Symptom cannot be null"
-            );
+            throw new IllegalArgumentException("Symptom cannot be null");
         }
 
         return symptoms.contains(symptom);
@@ -76,25 +82,25 @@ public class DailyCheckIn {
 
     private void validateDate(LocalDate date) {
         if (date == null) {
-            throw new IllegalArgumentException("date is null");
+            throw new IllegalArgumentException("Date cannot be null");
         }
     }
 
     private void validateCyclePhase(CyclePhase cyclePhase) {
         if (cyclePhase == null) {
-            throw new IllegalArgumentException("cyclePhase is null");
+            throw new IllegalArgumentException("Cycle phase cannot be null");
         }
     }
 
     private void validateEnergyLevel(EnergyLevel energyLevel) {
         if (energyLevel == null) {
-            throw new IllegalArgumentException("energyLevel is null");
+            throw new IllegalArgumentException("Energy level cannot be null");
         }
     }
 
     private void validateSleepQuality(SleepQuality sleepQuality) {
         if (sleepQuality == null) {
-            throw new IllegalArgumentException("sleepQuality is null");
+            throw new IllegalArgumentException("Sleep quality cannot be null");
         }
     }
 
@@ -112,7 +118,7 @@ public class DailyCheckIn {
 
     private void validateSleepHours(double sleepHours) {
         if (sleepHours < 0 || sleepHours > 24) {
-            throw new IllegalArgumentException("sleepHours is out of range");
+            throw new IllegalArgumentException("Sleep hours must be between 0 and 24");
         }
     }
 

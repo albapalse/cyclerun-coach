@@ -57,3 +57,4 @@ Service     -> contains business logic
 Repository  -> communicates with the database
 Entity      -> represents database tables
 DTO         -> transfers data between the API and the client
+```

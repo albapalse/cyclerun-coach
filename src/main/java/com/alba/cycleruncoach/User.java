@@ -1,34 +1,34 @@
 package com.alba.cycleruncoach;
-import java.util.Set;
-import java.util.HashMap;
-import java.util.Map;
+
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class User {
 
-    private final List<Workout> workouts;
     private final String username;
     private final String password;
+    private final List<Workout> workouts;
 
     public User(String username, String password) {
         validateUser(username);
         validatePassword(password);
-        this.workouts = new ArrayList<>();
         this.username = username;
         this.password = password;
+        this.workouts = new ArrayList<>();
     }
 
     public String getUsername() {
         return username;
     }
 
-
     public List<Workout> getWorkouts() {
-        return new ArrayList<>(workouts); //returns a COPY of the list
+        // Returning a copy prevents callers from changing the user's internal list.
+        return new ArrayList<>(workouts);
     }
-
 
     public void addWorkout(Workout workout) {
         validateWorkout(workout);
@@ -59,8 +59,9 @@ public class User {
         if (workoutType == null) {
             throw new IllegalArgumentException("Workout type cannot be null");
         }
-        return workouts.stream().filter(workout -> workout.getWorkoutType() == workoutType).toList();
-
+        return workouts.stream()
+                .filter(workout -> workout.getWorkoutType() == workoutType)
+                .toList();
     }
 
     public List<Workout> getWorkoutsByCyclePhase(CyclePhase cyclePhase) {
@@ -82,11 +83,15 @@ public class User {
             throw new IllegalArgumentException("Minimum distance must be greater than zero");
         }
 
-        return workouts.stream().filter(workout -> workout.getDistanceKm() >= minimumDistanceKm).toList();
+        return workouts.stream()
+                .filter(workout -> workout.getDistanceKm() >= minimumDistanceKm)
+                .toList();
     }
 
     public List<Workout> getWorkoutsSortedByDate() {
-        return workouts.stream().sorted((workout1, workout2) -> workout1.getDate().compareTo(workout2.getDate())).toList();
+        return workouts.stream()
+                .sorted((first, second) -> first.getDate().compareTo(second.getDate()))
+                .toList();
     }
 
     private void validateWorkout(Workout workout) {
@@ -108,7 +113,9 @@ public class User {
     }
 
     public int countHighIntensityWorkouts() {
-        return (int) workouts.stream().filter(workout -> workout.isHighIntensity()).count();
+        return (int) workouts.stream()
+                .filter(Workout::isHighIntensity)
+                .count();
     }
 
     public double calculateAveragePace() {
@@ -124,7 +131,9 @@ public class User {
 
 
     public Set<WorkoutType> getUsedWorkoutTypes() {
-        return workouts.stream().map(workout -> workout.getWorkoutType()).collect(Collectors.toSet());
+        return workouts.stream()
+                .map(Workout::getWorkoutType)
+                .collect(Collectors.toSet());
     }
 
     public Map<WorkoutType, Integer> countWorkoutsByType() {
@@ -132,13 +141,8 @@ public class User {
         for (Workout workout : workouts) {
             WorkoutType workoutType = workout.getWorkoutType();
 
-            if (countWorkoutsByType.containsKey(workoutType)) {
-                int count = countWorkoutsByType.get(workoutType);
-                countWorkoutsByType.put(workoutType, count + 1);
-
-            } else {
-                countWorkoutsByType.put(workoutType, 1);
-            }
+            int currentCount = countWorkoutsByType.getOrDefault(workoutType, 0);
+            countWorkoutsByType.put(workoutType, currentCount + 1);
         }
         return countWorkoutsByType;
     }
@@ -151,9 +155,9 @@ public class User {
 
             if (!workoutsByCyclePhase.containsKey(cyclePhase)) {
                 workoutsByCyclePhase.put(cyclePhase, new ArrayList<>());
-
             }
-                workoutsByCyclePhase.get(cyclePhase).add(workout);
+
+            workoutsByCyclePhase.get(cyclePhase).add(workout);
         }
         return workoutsByCyclePhase;
     }

@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Optional;
 
 public class InMemoryDailyCheckInRepository implements DailyCheckInRepository {
+
     private final Map<Long, DailyCheckIn> dailyCheckIns;
 
     public InMemoryDailyCheckInRepository() {
@@ -17,7 +18,9 @@ public class InMemoryDailyCheckInRepository implements DailyCheckInRepository {
     public void save(DailyCheckIn dailyCheckIn) {
         validateDailyCheckIn(dailyCheckIn);
         if (dailyCheckIns.containsKey(dailyCheckIn.getId())) {
-            throw new IllegalArgumentException("DailyCheckIn with id " + dailyCheckIn.getId() + " already exists");
+            throw new IllegalArgumentException(
+                    "Daily check-in with id " + dailyCheckIn.getId() + " already exists"
+            );
         }
         dailyCheckIns.put(dailyCheckIn.getId(), dailyCheckIn);
     }

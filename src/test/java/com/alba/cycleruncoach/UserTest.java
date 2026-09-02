@@ -2,11 +2,16 @@ package com.alba.cycleruncoach;
 
 import org.junit.jupiter.api.Test;
 
-import java.util.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class UserTest {
 
@@ -232,7 +237,10 @@ class UserTest {
     @Test
     void getWorkoutsByCyclePhase_throwsException_whenCyclePhaseIsNull() {
         User user = new User("Alba", "123");
-        assertThrows(IllegalArgumentException.class, () -> {user.getWorkoutsByCyclePhase(null);});
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> user.getWorkoutsByCyclePhase(null)
+        );
     }
 
 

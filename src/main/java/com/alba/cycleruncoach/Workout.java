@@ -5,15 +5,23 @@ import java.util.Objects;
 
 public class Workout {
 
+    private final Long id;
     private final LocalDate date;
     private final double distanceKm;
     private final int durationMinutes;
     private final int perceivedEffort;
     private final WorkoutType workoutType;
     private final CyclePhase cyclePhase;
-    private final Long id;
 
-    public Workout(Long id, LocalDate date, double distanceKm, int durationMinutes, int perceivedEffort, WorkoutType workoutType, CyclePhase cyclePhase) {
+    public Workout(
+            Long id,
+            LocalDate date,
+            double distanceKm,
+            int durationMinutes,
+            int perceivedEffort,
+            WorkoutType workoutType,
+            CyclePhase cyclePhase
+    ) {
         validateId(id);
         validateDate(date);
         validateDistanceKm(distanceKm);
@@ -31,7 +39,9 @@ public class Workout {
         this.cyclePhase = cyclePhase;
     }
 
-    public Long getId() { return id; }
+    public Long getId() {
+        return id;
+    }
 
     public LocalDate getDate() {
         return date;
@@ -89,13 +99,13 @@ public class Workout {
 
     private void validateWorkoutType(WorkoutType workoutType) {
         if (workoutType == null) {
-            throw new IllegalArgumentException("WorkoutType cannot be null");
+            throw new IllegalArgumentException("Workout type cannot be null");
         }
     }
 
     private void validateCyclePhase(CyclePhase cyclePhase) {
         if (cyclePhase == null) {
-            throw new IllegalArgumentException("CyclePhase cannot be null");
+            throw new IllegalArgumentException("Cycle phase cannot be null");
         }
     }
 
@@ -109,25 +119,24 @@ public class Workout {
     }
 
     public boolean isHighIntensity() {
-        return workoutType == WorkoutType.INTERVALS || workoutType == WorkoutType.TEMPO_RUN || perceivedEffort >= 8;
+        return workoutType == WorkoutType.INTERVALS
+                || workoutType == WorkoutType.TEMPO_RUN
+                || perceivedEffort >= 8;
     }
 
     @Override
     public boolean equals(Object o) {
-        // Same object in memory.
         if (this == o) {
             return true;
         }
 
-        // Null or different class.
         if (o == null || getClass() != o.getClass()) {
             return false;
         }
 
-        // Safe cast after checking the class.
         Workout workout = (Workout) o;
 
-        // Logical equality: same relevant attributes.
+        // The id is intentionally excluded: workouts are equal when their training data matches.
         return Double.compare(workout.distanceKm, distanceKm) == 0
                 && durationMinutes == workout.durationMinutes
                 && perceivedEffort == workout.perceivedEffort
@@ -138,7 +147,6 @@ public class Workout {
 
     @Override
     public int hashCode() {
-        // Must use the same attributes as equals().
         return Objects.hash(
                 date,
                 distanceKm,

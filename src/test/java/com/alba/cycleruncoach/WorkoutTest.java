@@ -6,17 +6,24 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class WorkoutTest {
 
     @Test
     void constructor_createsWorkoutWithValidData() {
-        Workout workout = new Workout(111L,
+        Workout workout = new Workout(
+                111L,
                 LocalDate.of(2026, 7, 1),
                 5.0,
                 30,
-                3, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR
+                3,
+                WorkoutType.INTERVALS,
+                CyclePhase.FOLLICULAR
         );
         assertEquals(111, workout.getId());
         assertEquals(LocalDate.of(2026, 7, 1), workout.getDate());
@@ -29,11 +36,14 @@ class WorkoutTest {
 
     @Test
     void calculatePace_returnsMinutesPerKilometer() {
-        Workout workout = new Workout(111L,
+        Workout workout = new Workout(
+                111L,
                 LocalDate.of(2026, 7, 1),
                 10.0,
                 60,
-                5, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR
+                5,
+                WorkoutType.INTERVALS,
+                CyclePhase.FOLLICULAR
         );
 
         double pace = workout.calculatePace();
@@ -43,11 +53,14 @@ class WorkoutTest {
 
     @Test
     void calculateTrainingLoad_returnsDistanceMultipliedByEffort() {
-        Workout workout = new Workout(111L,
+        Workout workout = new Workout(
+                111L,
                 LocalDate.of(2026, 7, 1),
                 10.0,
                 60,
-                5, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR
+                5,
+                WorkoutType.INTERVALS,
+                CyclePhase.FOLLICULAR
         );
 
         int trainingLoad = workout.calculateTrainingLoad();
@@ -57,13 +70,31 @@ class WorkoutTest {
 
     @Test
     void isHighIntensity_returnsTrue() {
-        Workout workout = new Workout(111L, LocalDate.of(2026, 7, 1), 10, 60, 8, WorkoutType.LONG_RUN, CyclePhase.MENSTRUAL);
+        Workout workout = new Workout(
+                111L,
+                LocalDate.of(2026, 7, 1),
+                10,
+                60,
+                8,
+                WorkoutType.LONG_RUN,
+                CyclePhase.MENSTRUAL
+        );
+
         assertTrue(workout.isHighIntensity());
     }
 
     @Test
     void isHighIntensity_returnsFalse() {
-        Workout workout = new Workout(111L, LocalDate.of(2026, 7, 1), 10, 60, 5, WorkoutType.EASY_RUN, CyclePhase.MENSTRUAL);
+        Workout workout = new Workout(
+                111L,
+                LocalDate.of(2026, 7, 1),
+                10,
+                60,
+                5,
+                WorkoutType.EASY_RUN,
+                CyclePhase.MENSTRUAL
+        );
+
         assertFalse(workout.isHighIntensity());
     }
 
@@ -229,7 +260,7 @@ class WorkoutTest {
         workouts.add(workout1);
         workouts.add(workout2);
 
-        assertEquals(1,workouts.size());
+        assertEquals(1, workouts.size());
 
     }
 

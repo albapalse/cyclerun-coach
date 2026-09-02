@@ -5,15 +5,18 @@ import org.junit.jupiter.api.Test;
 import java.time.LocalDate;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+class InMemoryWorkoutRepositoryTest {
 
-public class InMemoryWorkoutRepositoryTest {
     @Test
-        void save_saveWorkout() {
+    void save_storesWorkout() {
         InMemoryWorkoutRepository repository = new InMemoryWorkoutRepository();
-        User user = new User("Alba", "123");
-        Workout workout = new Workout(111L,
+        Workout workout = new Workout(
+                111L,
                 LocalDate.of(2026, 7, 1),
                 8.0,
                 48,
@@ -21,16 +24,18 @@ public class InMemoryWorkoutRepositoryTest {
                 WorkoutType.EASY_RUN,
                 CyclePhase.FOLLICULAR
         );
+
         repository.save(workout);
+
         assertTrue(repository.findAll().contains(workout));
         assertEquals(1, repository.findAll().size());
-
     }
+
     @Test
-    void findAll_returnWorkouts() {
+    void findAll_returnsSavedWorkouts() {
         InMemoryWorkoutRepository repository = new InMemoryWorkoutRepository();
-        User user = new User("Alba", "123");
-        Workout workout1 = new Workout(111L,
+        Workout firstWorkout = new Workout(
+                111L,
                 LocalDate.of(2026, 7, 1),
                 8.0,
                 48,
@@ -38,7 +43,8 @@ public class InMemoryWorkoutRepositoryTest {
                 WorkoutType.EASY_RUN,
                 CyclePhase.FOLLICULAR
         );
-        Workout workout2 = new Workout(112L,
+        Workout secondWorkout = new Workout(
+                112L,
                 LocalDate.of(2026, 7, 2),
                 8.0,
                 48,
@@ -46,21 +52,22 @@ public class InMemoryWorkoutRepositoryTest {
                 WorkoutType.EASY_RUN,
                 CyclePhase.FOLLICULAR
         );
-        repository.save(workout1);
-        repository.save(workout2);
+
+        repository.save(firstWorkout);
+        repository.save(secondWorkout);
 
         List<Workout> workouts = repository.findAll();
-        assertTrue(workouts.contains(workout1));
-        assertTrue(workouts.contains(workout2));
-        assertEquals(2, workouts.size());
 
+        assertTrue(workouts.contains(firstWorkout));
+        assertTrue(workouts.contains(secondWorkout));
+        assertEquals(2, workouts.size());
     }
 
     @Test
-    void findById_returnWorkout() {
+    void findById_returnsWorkout_whenWorkoutExists() {
         InMemoryWorkoutRepository repository = new InMemoryWorkoutRepository();
-        User user = new User("Alba", "123");
-        Workout workout1 = new Workout(111L,
+        Workout firstWorkout = new Workout(
+                111L,
                 LocalDate.of(2026, 7, 1),
                 8.0,
                 48,
@@ -68,7 +75,8 @@ public class InMemoryWorkoutRepositoryTest {
                 WorkoutType.EASY_RUN,
                 CyclePhase.FOLLICULAR
         );
-        Workout workout2 = new Workout(112L,
+        Workout secondWorkout = new Workout(
+                112L,
                 LocalDate.of(2026, 7, 2),
                 8.0,
                 48,
@@ -77,29 +85,28 @@ public class InMemoryWorkoutRepositoryTest {
                 CyclePhase.FOLLICULAR
         );
 
-        repository.save(workout1);
-        repository.save(workout2);
+        repository.save(firstWorkout);
+        repository.save(secondWorkout);
 
         Workout workout = repository.findById(111L);
 
-        assertEquals(workout1, workout);
-
+        assertEquals(firstWorkout, workout);
     }
+
     @Test
-    void findById_retursNull_whenWorkoutDoesNotExist() {
+    void findById_returnsNull_whenWorkoutDoesNotExist() {
         InMemoryWorkoutRepository repository = new InMemoryWorkoutRepository();
-        User user = new User("Alba", "123");
+
         Workout workout = repository.findById(111L);
 
         assertNull(workout);
-
     }
 
     @Test
-    void deleteById_returnTrue() {
+    void deleteById_returnsTrue_whenWorkoutExists() {
         InMemoryWorkoutRepository repository = new InMemoryWorkoutRepository();
-        User user = new User("Alba", "123");
-        Workout workout1 = new Workout(111L,
+        Workout firstWorkout = new Workout(
+                111L,
                 LocalDate.of(2026, 7, 1),
                 8.0,
                 48,
@@ -107,7 +114,8 @@ public class InMemoryWorkoutRepositoryTest {
                 WorkoutType.EASY_RUN,
                 CyclePhase.FOLLICULAR
         );
-        Workout workout2 = new Workout(112L,
+        Workout secondWorkout = new Workout(
+                112L,
                 LocalDate.of(2026, 7, 2),
                 8.0,
                 48,
@@ -115,10 +123,13 @@ public class InMemoryWorkoutRepositoryTest {
                 WorkoutType.EASY_RUN,
                 CyclePhase.FOLLICULAR
         );
-        repository.save(workout1);
-        repository.save(workout2);
-        assertTrue(repository.deleteById(111L));
 
+        repository.save(firstWorkout);
+        repository.save(secondWorkout);
+
+        boolean deleted = repository.deleteById(111L);
+
+        assertTrue(deleted);
     }
     @Test
     void deleteById_returnsFalse_whenWorkoutDoesNotExist() {
@@ -128,5 +139,4 @@ public class InMemoryWorkoutRepositoryTest {
 
         assertFalse(deleted);
     }
-
 }

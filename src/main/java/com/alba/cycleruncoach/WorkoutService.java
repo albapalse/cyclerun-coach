@@ -11,7 +11,6 @@ public class WorkoutService {
         this.workoutRepository = workoutRepository;
     }
 
-
     public double calculateTotalDistanceByType(User user, WorkoutType workoutType) {
         validateUser(user);
         validateWorkoutType(workoutType);

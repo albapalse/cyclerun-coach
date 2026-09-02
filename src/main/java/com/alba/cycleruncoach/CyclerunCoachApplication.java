@@ -9,5 +9,4 @@ public class CyclerunCoachApplication {
     public static void main(String[] args) {
         SpringApplication.run(CyclerunCoachApplication.class, args);
     }
-
 }
