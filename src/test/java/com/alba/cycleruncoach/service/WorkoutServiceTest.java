@@ -1,5 +1,11 @@
-package com.alba.cycleruncoach;
+package com.alba.cycleruncoach.service;
 
+import com.alba.cycleruncoach.domain.CyclePhase;
+import com.alba.cycleruncoach.domain.User;
+import com.alba.cycleruncoach.domain.Workout;
+import com.alba.cycleruncoach.domain.WorkoutType;
+import com.alba.cycleruncoach.repository.WorkoutRepository;
+import com.alba.cycleruncoach.repository.memory.InMemoryWorkoutRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

@@ -1,4 +1,6 @@
-package com.alba.cycleruncoach;
+package com.alba.cycleruncoach.repository;
+
+import com.alba.cycleruncoach.domain.DailyCheckIn;
 
 import java.util.List;
 import java.util.Optional;

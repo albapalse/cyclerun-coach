@@ -1,5 +1,8 @@
-package com.alba.cycleruncoach;
+package com.alba.cycleruncoach.service;
 
+import com.alba.cycleruncoach.domain.*;
+import com.alba.cycleruncoach.repository.DailyCheckInRepository;
+import com.alba.cycleruncoach.repository.memory.InMemoryDailyCheckInRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

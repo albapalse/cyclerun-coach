@@ -1,5 +1,8 @@
-package com.alba.cycleruncoach;
+package com.alba.cycleruncoach.repository.memory;
 
+import com.alba.cycleruncoach.domain.CyclePhase;
+import com.alba.cycleruncoach.domain.Workout;
+import com.alba.cycleruncoach.domain.WorkoutType;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
