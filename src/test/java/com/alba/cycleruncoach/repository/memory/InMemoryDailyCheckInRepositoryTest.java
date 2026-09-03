@@ -1,5 +1,11 @@
-package com.alba.cycleruncoach;
+package com.alba.cycleruncoach.repository.memory;
 
+import com.alba.cycleruncoach.domain.CyclePhase;
+import com.alba.cycleruncoach.domain.DailyCheckIn;
+import com.alba.cycleruncoach.domain.EnergyLevel;
+import com.alba.cycleruncoach.domain.SleepQuality;
+import com.alba.cycleruncoach.domain.Symptom;
+import com.alba.cycleruncoach.repository.DailyCheckInRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 

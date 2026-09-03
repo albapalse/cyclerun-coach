@@ -1,4 +1,4 @@
-package com.alba.cycleruncoach;
+package com.alba.cycleruncoach.domain;
 
 import org.junit.jupiter.api.Test;
 

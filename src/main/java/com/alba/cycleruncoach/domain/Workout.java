@@ -1,4 +1,4 @@
-package com.alba.cycleruncoach;
+package com.alba.cycleruncoach.domain;
 
 import java.time.LocalDate;
 import java.util.Objects;

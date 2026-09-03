@@ -1,4 +1,6 @@
-package com.alba.cycleruncoach;
+package com.alba.cycleruncoach.repository;
+
+import com.alba.cycleruncoach.domain.Workout;
 
 import java.util.List;
 
