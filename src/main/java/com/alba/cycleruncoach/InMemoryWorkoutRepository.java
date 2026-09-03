@@ -61,8 +61,10 @@ public class InMemoryWorkoutRepository implements WorkoutRepository {
     }
 
     private void validateId(Long id) {
-        if (id == null) {
-            throw new IllegalArgumentException("Id cannot be null");
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException(
+                    "Id must be greater than zero"
+            );
         }
     }
 }
