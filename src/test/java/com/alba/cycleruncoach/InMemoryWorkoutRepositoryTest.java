@@ -8,6 +8,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class InMemoryWorkoutRepositoryTest {
@@ -91,6 +92,39 @@ class InMemoryWorkoutRepositoryTest {
         Workout workout = repository.findById(111L);
 
         assertEquals(firstWorkout, workout);
+    }
+
+    @Test
+    void findById_throwsException_whenIdIsZero() {
+        InMemoryWorkoutRepository repository =
+                new InMemoryWorkoutRepository();
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> repository.findById(0L)
+        );
+    }
+
+    @Test
+    void findById_throwsException_whenIdIsNull() {
+        InMemoryWorkoutRepository repository =
+                new InMemoryWorkoutRepository();
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> repository.findById(null)
+        );
+    }
+
+    @Test
+    void findById_throwsException_whenIdIsNegative() {
+        InMemoryWorkoutRepository repository =
+                new InMemoryWorkoutRepository();
+
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> repository.findById(-1L)
+        );
     }
 
     @Test
