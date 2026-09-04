@@ -47,6 +47,22 @@ public class InMemoryWorkoutRepository implements WorkoutRepository {
     }
 
     @Override
+    public boolean update(Workout workout) {
+        validateWorkout(workout);
+
+        for (int index = 0; index < workouts.size(); index++) {
+            Workout storedWorkout = workouts.get(index);
+
+            if (storedWorkout.getId().equals(workout.getId())) {
+                workouts.set(index, workout);
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
     public boolean deleteById(Long id) {
         validateId(id);
 

@@ -12,5 +12,7 @@ public interface WorkoutRepository {
 
     Workout findById(Long id);
 
+    boolean update(Workout workout);
+
     boolean deleteById(Long id);
 }
