@@ -302,6 +302,52 @@ class WorkoutServiceTest {
     }
 
     @Test
+    void updateWorkout_updatesWorkout_whenWorkoutExists() {
+        Workout originalWorkout = new Workout(
+                777L,
+                LocalDate.of(2026, 7, 3),
+                8.0,
+                48,
+                5,
+                WorkoutType.EASY_RUN,
+                CyclePhase.FOLLICULAR
+        );
+        Workout updatedWorkout = new Workout(
+                777L,
+                LocalDate.of(2026, 7, 3),
+                10.0,
+                55,
+                8,
+                WorkoutType.TEMPO_RUN,
+                CyclePhase.LUTEAL
+        );
+        workoutService.saveWorkout(originalWorkout);
+
+        boolean updated = workoutService.updateWorkout(updatedWorkout);
+
+        assertTrue(updated);
+        assertEquals(updatedWorkout, workoutService.findWorkoutById(777L));
+    }
+
+    @Test
+    void updateWorkout_returnsFalse_whenWorkoutDoesNotExist() {
+        Workout workout = new Workout(
+                777L,
+                LocalDate.of(2026, 7, 3),
+                8.0,
+                48,
+                5,
+                WorkoutType.EASY_RUN,
+                CyclePhase.FOLLICULAR
+        );
+
+        boolean updated = workoutService.updateWorkout(workout);
+
+        assertFalse(updated);
+        assertTrue(workoutService.findAllWorkouts().isEmpty());
+    }
+
+    @Test
     void deleteWorkoutById_deletesWorkout_whenWorkoutExists() {
 
         Workout workout = new Workout(777L,

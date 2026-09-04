@@ -140,6 +140,55 @@ class InMemoryWorkoutRepositoryTest {
     }
 
     @Test
+    void update_replacesWorkout_whenWorkoutExists() {
+        InMemoryWorkoutRepository repository = new InMemoryWorkoutRepository();
+        Workout originalWorkout = new Workout(
+                111L,
+                LocalDate.of(2026, 7, 1),
+                8.0,
+                48,
+                5,
+                WorkoutType.EASY_RUN,
+                CyclePhase.FOLLICULAR
+        );
+        Workout updatedWorkout = new Workout(
+                111L,
+                LocalDate.of(2026, 7, 1),
+                10.0,
+                55,
+                8,
+                WorkoutType.TEMPO_RUN,
+                CyclePhase.LUTEAL
+        );
+        repository.save(originalWorkout);
+
+        boolean updated = repository.update(updatedWorkout);
+
+        assertTrue(updated);
+        assertEquals(updatedWorkout, repository.findById(111L));
+        assertEquals(1, repository.findAll().size());
+    }
+
+    @Test
+    void update_returnsFalse_whenWorkoutDoesNotExist() {
+        InMemoryWorkoutRepository repository = new InMemoryWorkoutRepository();
+        Workout workout = new Workout(
+                111L,
+                LocalDate.of(2026, 7, 1),
+                8.0,
+                48,
+                5,
+                WorkoutType.EASY_RUN,
+                CyclePhase.FOLLICULAR
+        );
+
+        boolean updated = repository.update(workout);
+
+        assertFalse(updated);
+        assertTrue(repository.findAll().isEmpty());
+    }
+
+    @Test
     void deleteById_returnsTrue_whenWorkoutExists() {
         InMemoryWorkoutRepository repository = new InMemoryWorkoutRepository();
         Workout firstWorkout = new Workout(

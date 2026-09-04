@@ -66,6 +66,10 @@ public class WorkoutService {
         return workoutRepository.findById(id);
     }
 
+    public boolean updateWorkout(Workout workout) {
+        return workoutRepository.update(workout);
+    }
+
     public boolean deleteWorkoutById(Long id) {
         return workoutRepository.deleteById(id);
     }
