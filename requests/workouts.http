@@ -1,0 +1,87 @@
+@baseUrl = http://localhost:8080
+
+### List workouts - initially empty
+GET {{baseUrl}}/api/workouts
+Accept: application/json
+
+### Create a workout
+POST {{baseUrl}}/api/workouts
+Content-Type: application/json
+
+{
+  "id": 1,
+  "date": "2026-09-04",
+  "distanceKm": 8.0,
+  "durationMinutes": 48,
+  "perceivedEffort": 5,
+  "workoutType": "EASY_RUN",
+  "cyclePhase": "FOLLICULAR"
+}
+
+### List workouts after creation
+GET {{baseUrl}}/api/workouts
+Accept: application/json
+
+### Find an existing workout
+GET {{baseUrl}}/api/workouts/1
+Accept: application/json
+
+### Find a missing workout
+GET {{baseUrl}}/api/workouts/99
+Accept: application/json
+
+### Update an existing workout
+PUT {{baseUrl}}/api/workouts/1
+Content-Type: application/json
+
+{
+  "id": 1,
+  "date": "2026-09-04",
+  "distanceKm": 10.0,
+  "durationMinutes": 55,
+  "perceivedEffort": 8,
+  "workoutType": "TEMPO_RUN",
+  "cyclePhase": "LUTEAL"
+}
+
+### Update a missing workout
+PUT {{baseUrl}}/api/workouts/99
+Content-Type: application/json
+
+{
+  "id": 99,
+  "date": "2026-09-04",
+  "distanceKm": 5.0,
+  "durationMinutes": 30,
+  "perceivedEffort": 4,
+  "workoutType": "RECOVERY_RUN",
+  "cyclePhase": "LUTEAL"
+}
+
+### Reject different IDs in the path and body
+PUT {{baseUrl}}/api/workouts/3
+Content-Type: application/json
+
+{
+  "id": 2,
+  "date": "2026-09-04",
+  "distanceKm": 5.0,
+  "durationMinutes": 30,
+  "perceivedEffort": 4,
+  "workoutType": "RECOVERY_RUN",
+  "cyclePhase": "LUTEAL"
+}
+
+### Delete an existing workout
+DELETE {{baseUrl}}/api/workouts/1
+
+### Confirm the deleted workout is missing
+GET {{baseUrl}}/api/workouts/1
+Accept: application/json
+
+### Delete a missing workout
+DELETE {{baseUrl}}/api/workouts/99
+
+### Confirm the list is empty again
+GET {{baseUrl}}/api/workouts
+Accept: application/json
