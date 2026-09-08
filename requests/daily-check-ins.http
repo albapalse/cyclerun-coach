@@ -1,0 +1,116 @@
+@baseUrl = http://localhost:8080
+
+### List check-ins - initially empty
+GET {{baseUrl}}/api/check-ins
+Accept: application/json
+
+### Create the most recent check-in
+POST {{baseUrl}}/api/check-ins
+Content-Type: application/json
+
+{
+  "id": 1,
+  "date": "2026-09-08",
+  "cyclePhase": "FOLLICULAR",
+  "energyLevel": "HIGH",
+  "sleepQuality": "GOOD",
+  "symptoms": ["CRAMPS", "FATIGUE"],
+  "sleepHours": 7.5
+}
+
+### Create an older check-in with a higher ID
+POST {{baseUrl}}/api/check-ins
+Content-Type: application/json
+
+{
+  "id": 2,
+  "date": "2026-09-06",
+  "cyclePhase": "LUTEAL",
+  "energyLevel": "LOW",
+  "sleepQuality": "GOOD",
+  "symptoms": [],
+  "sleepHours": 0
+}
+
+### List check-ins after creation
+GET {{baseUrl}}/api/check-ins
+Accept: application/json
+
+### Find the latest check-in
+GET {{baseUrl}}/api/check-ins/latest
+Accept: application/json
+
+### Find an existing check-in
+GET {{baseUrl}}/api/check-ins/1
+Accept: application/json
+
+### Find a missing check-in
+GET {{baseUrl}}/api/check-ins/99
+Accept: application/json
+
+### Update an existing check-in with a newer date
+PUT {{baseUrl}}/api/check-ins/2
+Content-Type: application/json
+
+{
+  "id": 2,
+  "date": "2026-09-09",
+  "cyclePhase": "LUTEAL",
+  "energyLevel": "MEDIUM",
+  "sleepQuality": "EXCELLENT",
+  "symptoms": ["HEADACHE"],
+  "sleepHours": 8.0
+}
+
+### Confirm that the updated check-in is now the latest
+GET {{baseUrl}}/api/check-ins/latest
+Accept: application/json
+
+### Reject different IDs in the path and body
+PUT {{baseUrl}}/api/check-ins/2
+Content-Type: application/json
+
+{
+  "id": 3,
+  "date": "2026-09-09",
+  "cyclePhase": "LUTEAL",
+  "energyLevel": "MEDIUM",
+  "sleepQuality": "EXCELLENT",
+  "symptoms": [],
+  "sleepHours": 8.0
+}
+
+### Update a missing check-in
+PUT {{baseUrl}}/api/check-ins/99
+Content-Type: application/json
+
+{
+  "id": 99,
+  "date": "2026-09-09",
+  "cyclePhase": "LUTEAL",
+  "energyLevel": "MEDIUM",
+  "sleepQuality": "EXCELLENT",
+  "symptoms": [],
+  "sleepHours": 8.0
+}
+
+### Delete an existing check-in
+DELETE {{baseUrl}}/api/check-ins/2
+
+### Confirm the deleted check-in is missing
+GET {{baseUrl}}/api/check-ins/2
+Accept: application/json
+
+### Delete a missing check-in
+DELETE {{baseUrl}}/api/check-ins/99
+
+### Delete the remaining check-in
+DELETE {{baseUrl}}/api/check-ins/1
+
+### Confirm the list is empty again
+GET {{baseUrl}}/api/check-ins
+Accept: application/json
+
+### Confirm latest is missing when the collection is empty
+GET {{baseUrl}}/api/check-ins/latest
+Accept: application/json
