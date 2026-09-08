@@ -94,6 +94,20 @@ Content-Type: application/json
   "sleepHours": 8.0
 }
 
+### Accept boundary values and remove duplicate symptoms
+POST {{baseUrl}}/api/check-ins
+Content-Type: application/json
+
+{
+  "id": 3,
+  "date": "2026-09-08",
+  "cyclePhase": "MENSTRUAL",
+  "energyLevel": "EXHAUSTED",
+  "sleepQuality": "BAD",
+  "symptoms": ["FATIGUE", "FATIGUE", "CRAMPS"],
+  "sleepHours": 24
+}
+
 ### Delete an existing check-in
 DELETE {{baseUrl}}/api/check-ins/2
 
@@ -106,6 +120,9 @@ DELETE {{baseUrl}}/api/check-ins/99
 
 ### Delete the remaining check-in
 DELETE {{baseUrl}}/api/check-ins/1
+
+### Delete the boundary-value check-in
+DELETE {{baseUrl}}/api/check-ins/3
 
 ### Confirm the list is empty again
 GET {{baseUrl}}/api/check-ins
