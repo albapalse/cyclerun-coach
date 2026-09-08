@@ -149,4 +149,36 @@ class DailyCheckInServiceTest {
                 7.5
         );
     }
+
+    @Test
+    void updateDailyCheckIn_updatesDailyCheckIn_whenItExists() {
+        DailyCheckIn originalCheckIn =
+                createDailyCheckIn(1L, LocalDate.of(2026, 7, 23));
+        DailyCheckIn updatedCheckIn =
+                createDailyCheckIn(1L, LocalDate.of(2026, 7, 24));
+
+        dailyCheckInService.saveDailyCheckIn(originalCheckIn);
+
+        boolean updated =
+                dailyCheckInService.updateDailyCheckIn(updatedCheckIn);
+
+        assertTrue(updated);
+        assertSame(
+                updatedCheckIn,
+                dailyCheckInService
+                        .findDailyCheckInById(1L)
+                        .orElseThrow()
+        );
+    }
+
+    @Test
+    void updateDailyCheckIn_returnsFalse_whenItDoesNotExist() {
+        DailyCheckIn checkIn = createDailyCheckIn(99L);
+
+        boolean updated =
+                dailyCheckInService.updateDailyCheckIn(checkIn);
+
+        assertFalse(updated);
+        assertTrue(dailyCheckInService.findAllDailyCheckIns().isEmpty());
+    }
 }

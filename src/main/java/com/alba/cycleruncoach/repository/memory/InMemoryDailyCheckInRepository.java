@@ -43,6 +43,18 @@ public class InMemoryDailyCheckInRepository implements DailyCheckInRepository {
     }
 
     @Override
+    public boolean update(DailyCheckIn dailyCheckIn) {
+        validateDailyCheckIn(dailyCheckIn);
+
+        if (!dailyCheckIns.containsKey(dailyCheckIn.getId())) {
+            return false;
+        }
+
+        dailyCheckIns.put(dailyCheckIn.getId(), dailyCheckIn);
+        return true;
+    }
+
+    @Override
     public boolean deleteById(Long id) {
         validateId(id);
         return dailyCheckIns.remove(id) != null;

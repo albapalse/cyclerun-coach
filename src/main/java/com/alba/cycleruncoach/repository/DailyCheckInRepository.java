@@ -13,5 +13,7 @@ public interface DailyCheckInRepository {
 
     Optional<DailyCheckIn> findById(Long id);
 
+    boolean update(DailyCheckIn dailyCheckIn);
+
     boolean deleteById(Long id);
 }

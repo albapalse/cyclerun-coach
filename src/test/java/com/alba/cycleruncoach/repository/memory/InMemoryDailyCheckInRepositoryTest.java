@@ -155,4 +155,37 @@ class InMemoryDailyCheckInRepositoryTest {
     void deleteById_throwsException_whenIdIsNegative() {
         assertThrows(IllegalArgumentException.class, () -> dailyCheckInRepository.deleteById(-1L));
     }
+
+    @Test
+    void update_replacesDailyCheckIn_whenItExists() {
+        DailyCheckIn originalCheckIn = createDailyCheckIn(1L);
+        DailyCheckIn updatedCheckIn = new DailyCheckIn(
+                1L,
+                LocalDate.of(2026, 7, 24),
+                CyclePhase.FOLLICULAR,
+                EnergyLevel.HIGH,
+                SleepQuality.GOOD,
+                Set.of(Symptom.CRAMPS),
+                8.0
+        );
+        dailyCheckInRepository.save(originalCheckIn);
+
+        boolean updated = dailyCheckInRepository.update(updatedCheckIn);
+
+        assertTrue(updated);
+        assertSame(
+                updatedCheckIn,
+                dailyCheckInRepository.findById(1L).orElseThrow()
+        );
+        assertEquals(1, dailyCheckInRepository.findAll().size());
+    }
+    @Test
+    void update_returnsFalse_whenDailyCheckInDoesNotExist() {
+        DailyCheckIn checkIn = createDailyCheckIn(99L);
+
+        boolean updated = dailyCheckInRepository.update(checkIn);
+
+        assertFalse(updated);
+        assertTrue(dailyCheckInRepository.findAll().isEmpty());
+    }
 }
