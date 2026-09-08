@@ -31,6 +31,10 @@ public class DailyCheckInService {
         return dailyCheckInRepository.findById(id);
     }
 
+    public boolean updateDailyCheckIn(DailyCheckIn dailyCheckIn) {
+        return dailyCheckInRepository.update(dailyCheckIn);
+    }
+
     public boolean deleteDailyCheckInById(Long id) {
         return dailyCheckInRepository.deleteById(id);
     }
