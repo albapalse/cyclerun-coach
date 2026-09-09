@@ -47,6 +47,9 @@ Through this project, I want to practice building a backend application using Ja
 - Unit and integration testing
 - Git and GitHub workflow
 
+Database decisions that still need deeper study are tracked in the
+[database learning backlog](docs/database-learning-backlog.md).
+
 ## Planned Architecture
 
 The project will follow a layered structure:
