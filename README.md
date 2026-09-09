@@ -6,18 +6,21 @@ The idea behind this project is to help women track their running training toget
 
 ## Project Status
 
-This project is currently in early development.
+This project is currently in early development. Workout and daily check-in
+tracking are available through REST APIs and persist in a local H2 database.
+Training recommendations are still planned.
 
-The first version will focus on building a clean backend API with basic workout tracking, cycle logs, and simple training recommendations.
-
-## Main Features
-
-Planned features:
+## Current Features
 
 - Create, read, update, and delete running workouts
 - Track workout details such as date, distance, duration, intensity, and workout type
-- Register daily cycle information
+- Create, read, update, and delete daily cycle check-ins
 - Track energy levels, symptoms, and sleep quality
+- Retrieve the latest daily check-in
+- Preserve workouts, check-ins, and symptoms after restarting the application
+
+Planned next feature:
+
 - Generate basic training recommendations based on cycle phase and energy level
 
 ## Tech Stack
@@ -50,14 +53,22 @@ Through this project, I want to practice building a backend application using Ja
 Database decisions that still need deeper study are tracked in the
 [database learning backlog](docs/database-learning-backlog.md).
 
-## Planned Architecture
+## Current Architecture
 
-The project will follow a layered structure:
+The domain model is independent from persistence details. Controllers and
+services depend on repository interfaces; JPA adapters implement those
+interfaces and translate between domain objects and database entities.
 
 ```text
-Controller  -> handles HTTP requests
-Service     -> contains business logic
-Repository  -> communicates with the database
-Entity      -> represents database tables
-DTO         -> transfers data between the API and the client
+HTTP/JSON
+   -> Controller
+   -> Service
+   -> Repository interface
+   -> JPA repository adapter
+   -> Mapper
+   -> JPA entity / Spring Data
+   -> H2
 ```
+
+The in-memory repository implementations remain available for isolated unit
+tests, but production wiring uses the JPA adapters.
