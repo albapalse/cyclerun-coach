@@ -1,10 +1,10 @@
 @baseUrl = http://localhost:8080
 
-### List workouts - initially empty
+### List current workouts (the H2 database may already contain data)
 GET {{baseUrl}}/api/workouts
 Accept: application/json
 
-### Create a workout
+### Create a workout (run once, or delete id 1 before repeating)
 POST {{baseUrl}}/api/workouts
 Content-Type: application/json
 
