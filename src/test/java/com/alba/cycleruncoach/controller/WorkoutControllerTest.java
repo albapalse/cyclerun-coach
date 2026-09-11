@@ -27,7 +27,17 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.alba.cycleruncoach.controller.mapper.WorkoutDtoMapper;
+import org.springframework.context.annotation.Import;
+
+import java.util.stream.Stream;
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
 @WebMvcTest(WorkoutController.class)
+@Import(WorkoutDtoMapper.class)
 class WorkoutControllerTest {
 
     @Autowired
@@ -111,7 +121,6 @@ class WorkoutControllerTest {
             throws Exception {
         String requestBody = """
                 {
-                  "id": 1,
                   "date": "2026-09-04",
                   "distanceKm": 10.0,
                   "durationMinutes": 55,
@@ -139,7 +148,6 @@ class WorkoutControllerTest {
             throws Exception {
         String requestBody = """
                 {
-                  "id": 99,
                   "date": "2026-09-04",
                   "distanceKm": 5.0,
                   "durationMinutes": 30,
@@ -159,27 +167,26 @@ class WorkoutControllerTest {
     }
 
     @Test
-    void updateWorkout_returnsBadRequest_whenPathIdAndBodyIdDiffer()
+    void updateWorkout_returnsBadRequest_whenDistanceIsNotPositive()
             throws Exception {
         String requestBody = """
-                {
-                  "id": 2,
-                  "date": "2026-09-04",
-                  "distanceKm": 5.0,
-                  "durationMinutes": 30,
-                  "perceivedEffort": 4,
-                  "workoutType": "RECOVERY_RUN",
-                  "cyclePhase": "LUTEAL"
-                }
-                """;
+            {
+              "date": "2026-09-04",
+              "distanceKm": 0.0,
+              "durationMinutes": 30,
+              "perceivedEffort": 4,
+              "workoutType": "RECOVERY_RUN",
+              "cyclePhase": "LUTEAL"
+            }
+            """;
 
         mockMvc.perform(put("/api/workouts/3")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(""));
+                .andExpect(status().isBadRequest());
 
-        verify(workoutService, never()).updateWorkout(any(Workout.class));
+        verify(workoutService, never())
+                .updateWorkout(any(Workout.class));
     }
 
     @Test
@@ -204,5 +211,94 @@ class WorkoutControllerTest {
         mockMvc.perform(delete("/api/workouts/99"))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(""));
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("invalidCreateWorkoutRequests")
+    void createWorkout_returnsBadRequest_whenRequestIsInvalid(
+            String scenario,
+            String requestBody
+    ) throws Exception {
+        mockMvc.perform(post("/api/workouts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest());
+
+        verify(workoutService, never())
+                .saveWorkout(any(Workout.class));
+    }
+
+    private static Stream<Arguments> invalidCreateWorkoutRequests() {
+        String validRequest = validCreateWorkoutJson();
+
+        return Stream.of(
+                Arguments.of(
+                        "missing id",
+                        validRequest.replace("\"id\": 1,", "")
+                ),
+                Arguments.of(
+                        "future date",
+                        validRequest.replace(
+                                "\"date\": \"2026-09-04\"",
+                                "\"date\": \"2999-01-01\""
+                        )
+                ),
+                Arguments.of(
+                        "zero distance",
+                        validRequest.replace(
+                                "\"distanceKm\": 8.0",
+                                "\"distanceKm\": 0.0"
+                        )
+                ),
+                Arguments.of(
+                        "zero duration",
+                        validRequest.replace(
+                                "\"durationMinutes\": 48",
+                                "\"durationMinutes\": 0"
+                        )
+                ),
+                Arguments.of(
+                        "effort below minimum",
+                        validRequest.replace(
+                                "\"perceivedEffort\": 5",
+                                "\"perceivedEffort\": 0"
+                        )
+                ),
+                Arguments.of(
+                        "effort above maximum",
+                        validRequest.replace(
+                                "\"perceivedEffort\": 5",
+                                "\"perceivedEffort\": 11"
+                        )
+                ),
+                Arguments.of(
+                        "missing workout type",
+                        validRequest.replace(
+                                "\"workoutType\": \"EASY_RUN\"",
+                                "\"workoutType\": null"
+                        )
+                ),
+                Arguments.of(
+                        "unknown cycle phase",
+                        validRequest.replace(
+                                "\"cyclePhase\": \"FOLLICULAR\"",
+                                "\"cyclePhase\": \"UNKNOWN\""
+                        )
+                )
+        );
+    }
+
+    private static String validCreateWorkoutJson() {
+        return """
+            {
+              "id": 1,
+              "date": "2026-09-04",
+              "distanceKm": 8.0,
+              "durationMinutes": 48,
+              "perceivedEffort": 5,
+              "workoutType": "EASY_RUN",
+              "cyclePhase": "FOLLICULAR"
+            }
+            """;
     }
 }
