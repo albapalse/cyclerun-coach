@@ -53,7 +53,6 @@ PUT {{baseUrl}}/api/check-ins/2
 Content-Type: application/json
 
 {
-  "id": 2,
   "date": "2026-09-09",
   "cyclePhase": "LUTEAL",
   "energyLevel": "MEDIUM",
@@ -66,18 +65,17 @@ Content-Type: application/json
 GET {{baseUrl}}/api/check-ins/latest
 Accept: application/json
 
-### Reject different IDs in the path and body
+### Reject invalid sleep hours
 PUT {{baseUrl}}/api/check-ins/2
 Content-Type: application/json
 
 {
-  "id": 3,
   "date": "2026-09-09",
   "cyclePhase": "LUTEAL",
   "energyLevel": "MEDIUM",
   "sleepQuality": "EXCELLENT",
   "symptoms": [],
-  "sleepHours": 8.0
+  "sleepHours": 24.1
 }
 
 ### Update a missing check-in
@@ -85,7 +83,6 @@ PUT {{baseUrl}}/api/check-ins/99
 Content-Type: application/json
 
 {
-  "id": 99,
   "date": "2026-09-09",
   "cyclePhase": "LUTEAL",
   "energyLevel": "MEDIUM",

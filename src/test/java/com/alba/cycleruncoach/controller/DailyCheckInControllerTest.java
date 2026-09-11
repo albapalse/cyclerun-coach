@@ -31,7 +31,18 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import com.alba.cycleruncoach.controller.mapper.DailyCheckInDtoMapper;
+import org.springframework.context.annotation.Import;
+
+import java.util.stream.Stream;
+
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
+
 @WebMvcTest(DailyCheckInController.class)
+@Import(DailyCheckInDtoMapper.class)
 class DailyCheckInControllerTest {
 
     @Autowired
@@ -126,11 +137,10 @@ class DailyCheckInControllerTest {
 
         mockMvc.perform(put("/api/check-ins/1")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(dailyCheckInJson(1L)))
+                        .content(updateDailyCheckInJson()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.energyLevel").value("HIGH"));
-
         verify(dailyCheckInService)
                 .updateDailyCheckIn(any(DailyCheckIn.class));
     }
@@ -143,19 +153,24 @@ class DailyCheckInControllerTest {
 
         mockMvc.perform(put("/api/check-ins/99")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(dailyCheckInJson(99L)))
+                        .content(updateDailyCheckInJson()))
                 .andExpect(status().isNotFound())
                 .andExpect(content().string(""));
     }
 
     @Test
-    void updateDailyCheckIn_returnsBadRequest_whenPathIdAndBodyIdDiffer()
+    void updateDailyCheckIn_returnsBadRequest_whenSleepHoursExceedMaximum()
             throws Exception {
+        String requestBody = updateDailyCheckInJson()
+                .replace(
+                        "\"sleepHours\": 7.5",
+                        "\"sleepHours\": 24.1"
+                );
+
         mockMvc.perform(put("/api/check-ins/2")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(dailyCheckInJson(3L)))
-                .andExpect(status().isBadRequest())
-                .andExpect(content().string(""));
+                        .content(requestBody))
+                .andExpect(status().isBadRequest());
 
         verify(dailyCheckInService, never())
                 .updateDailyCheckIn(any(DailyCheckIn.class));
@@ -197,7 +212,7 @@ class DailyCheckInControllerTest {
         );
     }
 
-    private String dailyCheckInJson(Long id) {
+    private static String dailyCheckInJson(Long id) {
         return """
                 {
                   "id": %d,
@@ -209,5 +224,125 @@ class DailyCheckInControllerTest {
                   "sleepHours": 7.5
                 }
                 """.formatted(id);
+    }
+    private String updateDailyCheckInJson() {
+        return """
+            {
+              "date": "2026-09-08",
+              "cyclePhase": "FOLLICULAR",
+              "energyLevel": "HIGH",
+              "sleepQuality": "GOOD",
+              "symptoms": ["FATIGUE"],
+              "sleepHours": 7.5
+            }
+            """;
+    }
+
+    @ParameterizedTest(name = "{0}")
+    @MethodSource("invalidCreateDailyCheckInRequests")
+    void createDailyCheckIn_returnsBadRequest_whenRequestIsInvalid(
+            String scenario,
+            String requestBody
+    ) throws Exception {
+        mockMvc.perform(post("/api/check-ins")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest());
+
+        verify(dailyCheckInService, never())
+                .saveDailyCheckIn(any(DailyCheckIn.class));
+    }
+
+    @ParameterizedTest
+    @ValueSource(doubles = {0.0, 24.0})
+    void createDailyCheckIn_acceptsBoundarySleepHours(
+            double sleepHours
+    ) throws Exception {
+        String requestBody = dailyCheckInJson(1L)
+                .replace(
+                        "\"symptoms\": [\"FATIGUE\"]",
+                        "\"symptoms\": []"
+                )
+                .replace(
+                        "\"sleepHours\": 7.5",
+                        "\"sleepHours\": " + sleepHours
+                );
+
+        mockMvc.perform(post("/api/check-ins")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.sleepHours").value(sleepHours))
+                .andExpect(jsonPath("$.symptoms").isEmpty());
+
+        verify(dailyCheckInService)
+                .saveDailyCheckIn(any(DailyCheckIn.class));
+    }
+
+    private static Stream<Arguments> invalidCreateDailyCheckInRequests() {
+        String validRequest = dailyCheckInJson(1L);
+
+        return Stream.of(
+                Arguments.of(
+                        "missing id",
+                        validRequest.replace("\"id\": 1,", "")
+                ),
+                Arguments.of(
+                        "future date",
+                        validRequest.replace(
+                                "\"date\": \"2026-09-08\"",
+                                "\"date\": \"2999-01-01\""
+                        )
+                ),
+                Arguments.of(
+                        "missing cycle phase",
+                        validRequest.replace(
+                                "\"cyclePhase\": \"FOLLICULAR\"",
+                                "\"cyclePhase\": null"
+                        )
+                ),
+                Arguments.of(
+                        "unknown energy level",
+                        validRequest.replace(
+                                "\"energyLevel\": \"HIGH\"",
+                                "\"energyLevel\": \"UNKNOWN\""
+                        )
+                ),
+                Arguments.of(
+                        "missing sleep quality",
+                        validRequest.replace(
+                                "\"sleepQuality\": \"GOOD\"",
+                                "\"sleepQuality\": null"
+                        )
+                ),
+                Arguments.of(
+                        "missing symptoms",
+                        validRequest.replace(
+                                "\"symptoms\": [\"FATIGUE\"]",
+                                "\"symptoms\": null"
+                        )
+                ),
+                Arguments.of(
+                        "null symptom",
+                        validRequest.replace(
+                                "\"symptoms\": [\"FATIGUE\"]",
+                                "\"symptoms\": [null]"
+                        )
+                ),
+                Arguments.of(
+                        "sleep hours below minimum",
+                        validRequest.replace(
+                                "\"sleepHours\": 7.5",
+                                "\"sleepHours\": -0.1"
+                        )
+                ),
+                Arguments.of(
+                        "sleep hours above maximum",
+                        validRequest.replace(
+                                "\"sleepHours\": 7.5",
+                                "\"sleepHours\": 24.1"
+                        )
+                )
+        );
     }
 }

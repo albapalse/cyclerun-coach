@@ -35,7 +35,6 @@ PUT {{baseUrl}}/api/workouts/1
 Content-Type: application/json
 
 {
-  "id": 1,
   "date": "2026-09-04",
   "distanceKm": 10.0,
   "durationMinutes": 55,
@@ -49,7 +48,6 @@ PUT {{baseUrl}}/api/workouts/99
 Content-Type: application/json
 
 {
-  "id": 99,
   "date": "2026-09-04",
   "distanceKm": 5.0,
   "durationMinutes": 30,
@@ -58,14 +56,13 @@ Content-Type: application/json
   "cyclePhase": "LUTEAL"
 }
 
-### Reject different IDs in the path and body
+### Reject an invalid workout
 PUT {{baseUrl}}/api/workouts/3
 Content-Type: application/json
 
 {
-  "id": 2,
   "date": "2026-09-04",
-  "distanceKm": 5.0,
+  "distanceKm": 0.0,
   "durationMinutes": 30,
   "perceivedEffort": 4,
   "workoutType": "RECOVERY_RUN",
