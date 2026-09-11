@@ -1,9 +1,15 @@
 package com.alba.cycleruncoach.controller;
 
+import com.alba.cycleruncoach.controller.dto.CreateDailyCheckInRequest;
+import com.alba.cycleruncoach.controller.dto.DailyCheckInResponse;
+import com.alba.cycleruncoach.controller.dto.UpdateDailyCheckInRequest;
+import com.alba.cycleruncoach.controller.mapper.DailyCheckInDtoMapper;
 import com.alba.cycleruncoach.domain.DailyCheckIn;
 import com.alba.cycleruncoach.service.DailyCheckInService;
 
 import java.util.List;
+
+import jakarta.validation.Valid;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,55 +27,66 @@ import org.springframework.web.bind.annotation.RestController;
 public class DailyCheckInController {
 
     private final DailyCheckInService dailyCheckInService;
+    private final DailyCheckInDtoMapper dailyCheckInDtoMapper;
 
     public DailyCheckInController(
-            DailyCheckInService dailyCheckInService
+            DailyCheckInService dailyCheckInService,
+            DailyCheckInDtoMapper dailyCheckInDtoMapper
     ) {
         this.dailyCheckInService = dailyCheckInService;
+        this.dailyCheckInDtoMapper = dailyCheckInDtoMapper;
     }
 
     @GetMapping
-    public List<DailyCheckIn> findAllDailyCheckIns() {
-        return dailyCheckInService.findAllDailyCheckIns();
+    public List<DailyCheckInResponse> findAllDailyCheckIns() {
+        return dailyCheckInService
+                .findAllDailyCheckIns()
+                .stream()
+                .map(dailyCheckInDtoMapper::toResponse)
+                .toList();
     }
 
     @GetMapping("/latest")
-    public ResponseEntity<DailyCheckIn> findLatestDailyCheckIn() {
+    public ResponseEntity<DailyCheckInResponse> findLatestDailyCheckIn() {
         return dailyCheckInService
                 .findLatestDailyCheckIn()
+                .map(dailyCheckInDtoMapper::toResponse)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<DailyCheckIn> findDailyCheckInById(
+    public ResponseEntity<DailyCheckInResponse> findDailyCheckInById(
             @PathVariable Long id
     ) {
         return dailyCheckInService
                 .findDailyCheckInById(id)
+                .map(dailyCheckInDtoMapper::toResponse)
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<DailyCheckIn> createDailyCheckIn(
-            @RequestBody DailyCheckIn dailyCheckIn
+    public ResponseEntity<DailyCheckInResponse> createDailyCheckIn(
+            @Valid @RequestBody CreateDailyCheckInRequest request
     ) {
+        DailyCheckIn dailyCheckIn =
+                dailyCheckInDtoMapper.toDomain(request);
+
         dailyCheckInService.saveDailyCheckIn(dailyCheckIn);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(dailyCheckIn);
+                .body(dailyCheckInDtoMapper.toResponse(dailyCheckIn));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<DailyCheckIn> updateDailyCheckIn(
+    public ResponseEntity<DailyCheckInResponse> updateDailyCheckIn(
             @PathVariable Long id,
-            @RequestBody DailyCheckIn dailyCheckIn
+            @Valid @RequestBody UpdateDailyCheckInRequest request
     ) {
-        if (!id.equals(dailyCheckIn.getId())) {
-            return ResponseEntity.badRequest().build();
-        }
+        DailyCheckIn dailyCheckIn =
+                dailyCheckInDtoMapper.toDomain(id, request);
 
         boolean updated =
                 dailyCheckInService.updateDailyCheckIn(dailyCheckIn);
@@ -78,7 +95,9 @@ public class DailyCheckInController {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(dailyCheckIn);
+        return ResponseEntity.ok(
+                dailyCheckInDtoMapper.toResponse(dailyCheckIn)
+        );
     }
 
     @DeleteMapping("/{id}")

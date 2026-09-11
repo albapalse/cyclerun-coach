@@ -15,24 +15,38 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import com.alba.cycleruncoach.controller.dto.CreateWorkoutRequest;
+import com.alba.cycleruncoach.controller.dto.WorkoutResponse;
+import com.alba.cycleruncoach.controller.mapper.WorkoutDtoMapper;
+import com.alba.cycleruncoach.controller.dto.UpdateWorkoutRequest;
+import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("/api/workouts")
 public class WorkoutController {
 
     private final WorkoutService workoutService;
+    private final WorkoutDtoMapper workoutDtoMapper;
 
-    public WorkoutController(WorkoutService workoutService) {
+    public WorkoutController(
+            WorkoutService workoutService,
+            WorkoutDtoMapper workoutDtoMapper
+    ) {
         this.workoutService = workoutService;
+        this.workoutDtoMapper = workoutDtoMapper;
     }
 
     @GetMapping
-    public List<Workout> findAllWorkouts() {
-        return workoutService.findAllWorkouts();
+    public List<WorkoutResponse> findAllWorkouts() {
+        return workoutService
+                .findAllWorkouts()
+                .stream()
+                .map(workoutDtoMapper::toResponse)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Workout> findWorkoutById(
+    public ResponseEntity<WorkoutResponse> findWorkoutById(
             @PathVariable Long id
     ) {
         Workout workout = workoutService.findWorkoutById(id);
@@ -41,28 +55,30 @@ public class WorkoutController {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(workout);
+        return ResponseEntity.ok(
+                workoutDtoMapper.toResponse(workout)
+        );
     }
 
     @PostMapping
-    public ResponseEntity<Workout> createWorkout(
-            @RequestBody Workout workout
+    public ResponseEntity<WorkoutResponse> createWorkout(
+            @Valid @RequestBody CreateWorkoutRequest request
     ) {
+        Workout workout = workoutDtoMapper.toDomain(request);
+
         workoutService.saveWorkout(workout);
 
         return ResponseEntity
                 .status(HttpStatus.CREATED)
-                .body(workout);
+                .body(workoutDtoMapper.toResponse(workout));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Workout> updateWorkout(
+    public ResponseEntity<WorkoutResponse> updateWorkout(
             @PathVariable Long id,
-            @RequestBody Workout workout
+            @Valid @RequestBody UpdateWorkoutRequest request
     ) {
-        if (!id.equals(workout.getId())) {
-            return ResponseEntity.badRequest().build();
-        }
+        Workout workout = workoutDtoMapper.toDomain(id, request);
 
         boolean updated = workoutService.updateWorkout(workout);
 
@@ -70,9 +86,10 @@ public class WorkoutController {
             return ResponseEntity.notFound().build();
         }
 
-        return ResponseEntity.ok(workout);
+        return ResponseEntity.ok(
+                workoutDtoMapper.toResponse(workout)
+        );
     }
-
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteWorkout(
             @PathVariable Long id
