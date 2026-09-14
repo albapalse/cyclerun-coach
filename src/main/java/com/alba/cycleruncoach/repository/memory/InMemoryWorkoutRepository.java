@@ -2,9 +2,11 @@ package com.alba.cycleruncoach.repository.memory;
 
 import com.alba.cycleruncoach.domain.Workout;
 import com.alba.cycleruncoach.repository.WorkoutRepository;
+import com.alba.cycleruncoach.exception.DuplicateResourceException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 public class InMemoryWorkoutRepository implements WorkoutRepository {
 
@@ -18,8 +20,10 @@ public class InMemoryWorkoutRepository implements WorkoutRepository {
     public void save(Workout workout) {
         validateWorkout(workout);
 
-        if (findById(workout.getId()) != null) {
-            throw new IllegalArgumentException("Workout with this id already exists");
+        if (findById(workout.getId()).isPresent()) {
+            throw new DuplicateResourceException(
+                    "Workout with id " + workout.getId() + " already exists"
+            );
         }
 
         workouts.add(workout);
@@ -31,16 +35,16 @@ public class InMemoryWorkoutRepository implements WorkoutRepository {
     }
 
     @Override
-    public Workout findById(Long id) {
+    public Optional<Workout> findById(Long id) {
         validateId(id);
 
         for (Workout workout : workouts) {
             if (workout.getId().equals(id)) {
-                return workout;
+                return Optional.of(workout);
             }
         }
 
-        return null;
+        return Optional.empty();
     }
 
     @Override
@@ -63,13 +67,13 @@ public class InMemoryWorkoutRepository implements WorkoutRepository {
     public boolean deleteById(Long id) {
         validateId(id);
 
-        Workout workoutToDelete = findById(id);
+        Optional<Workout> workoutToDelete = findById(id);
 
-        if (workoutToDelete == null) {
+        if (workoutToDelete.isEmpty()) {
             return false;
         }
 
-        workouts.remove(workoutToDelete);
+        workouts.remove(workoutToDelete.get());
         return true;
     }
 

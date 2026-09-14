@@ -2,6 +2,7 @@ package com.alba.cycleruncoach.repository.memory;
 
 import com.alba.cycleruncoach.domain.DailyCheckIn;
 import com.alba.cycleruncoach.repository.DailyCheckInRepository;
+import com.alba.cycleruncoach.exception.DuplicateResourceException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -21,8 +22,10 @@ public class InMemoryDailyCheckInRepository implements DailyCheckInRepository {
     public void save(DailyCheckIn dailyCheckIn) {
         validateDailyCheckIn(dailyCheckIn);
         if (dailyCheckIns.containsKey(dailyCheckIn.getId())) {
-            throw new IllegalArgumentException(
-                    "Daily check-in with id " + dailyCheckIn.getId() + " already exists"
+            throw new DuplicateResourceException(
+                    "Daily check-in with id "
+                            + dailyCheckIn.getId()
+                            + " already exists"
             );
         }
         dailyCheckIns.put(dailyCheckIn.getId(), dailyCheckIn);

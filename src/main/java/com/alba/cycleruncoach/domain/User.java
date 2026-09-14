@@ -10,14 +10,11 @@ import java.util.stream.Collectors;
 public class User {
 
     private final String username;
-    private final String password;
     private final List<Workout> workouts;
 
-    public User(String username, String password) {
+    public User(String username) {
         validateUser(username);
-        validatePassword(password);
         this.username = username;
-        this.password = password;
         this.workouts = new ArrayList<>();
     }
 
@@ -103,12 +100,6 @@ public class User {
     private void validateUser(String username) {
         if (username == null || username.isBlank()) {
             throw new IllegalArgumentException("Username cannot be null or blank");
-        }
-    }
-
-    private void validatePassword(String password) {
-        if (password == null || password.isBlank()) {
-            throw new IllegalArgumentException("Password cannot be null or blank");
         }
     }
 

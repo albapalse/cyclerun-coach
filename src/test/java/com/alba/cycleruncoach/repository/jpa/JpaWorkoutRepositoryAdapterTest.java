@@ -4,6 +4,7 @@ import com.alba.cycleruncoach.domain.CyclePhase;
 import com.alba.cycleruncoach.domain.Workout;
 import com.alba.cycleruncoach.domain.WorkoutType;
 import com.alba.cycleruncoach.repository.WorkoutRepository;
+import com.alba.cycleruncoach.exception.DuplicateResourceException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -14,8 +15,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -32,9 +31,8 @@ class JpaWorkoutRepositoryAdapterTest {
 
         repository.save(workout);
 
-        Workout storedWorkout = repository.findById(1L);
+        Workout storedWorkout = repository.findById(1L).orElseThrow();
 
-        assertNotNull(storedWorkout);
         assertEquals(1L, storedWorkout.getId());
         assertEquals(workout, storedWorkout);
     }
@@ -63,23 +61,21 @@ class JpaWorkoutRepositoryAdapterTest {
     }
 
     @Test
-    void shouldReturnNullWhenWorkoutDoesNotExist() {
-        Workout workout = repository.findById(999L);
-
-        assertNull(workout);
+    void shouldReturnEmptyWhenWorkoutDoesNotExist() {
+        assertTrue(repository.findById(999L).isEmpty());
     }
 
     @Test
     void shouldRejectDuplicateId() {
         repository.save(createWorkout(1L));
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
+        DuplicateResourceException exception = assertThrows(
+                DuplicateResourceException.class,
                 () -> repository.save(createWorkout(1L))
         );
 
         assertEquals(
-                "Workout with this id already exists",
+                "Workout with id 1 already exists",
                 exception.getMessage()
         );
     }
@@ -99,7 +95,7 @@ class JpaWorkoutRepositoryAdapterTest {
         );
 
         boolean updated = repository.update(updatedWorkout);
-        Workout storedWorkout = repository.findById(1L);
+        Workout storedWorkout = repository.findById(1L).orElseThrow();
 
         assertTrue(updated);
         assertEquals(updatedWorkout, storedWorkout);
@@ -111,7 +107,7 @@ class JpaWorkoutRepositoryAdapterTest {
         boolean updated = repository.update(createWorkout(99L));
 
         assertFalse(updated);
-        assertNull(repository.findById(99L));
+        assertTrue(repository.findById(99L).isEmpty());
     }
 
     @Test
@@ -121,7 +117,7 @@ class JpaWorkoutRepositoryAdapterTest {
         boolean deleted = repository.deleteById(1L);
 
         assertTrue(deleted);
-        assertNull(repository.findById(1L));
+        assertTrue(repository.findById(1L).isEmpty());
     }
 
     @Test

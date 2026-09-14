@@ -7,6 +7,7 @@ import com.alba.cycleruncoach.domain.WorkoutType;
 import com.alba.cycleruncoach.repository.WorkoutRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
@@ -62,10 +63,9 @@ public class WorkoutService {
         return workoutRepository.findAll();
     }
 
-    public Workout findWorkoutById(Long id) {
+    public Optional<Workout> findWorkoutById(Long id) {
         return workoutRepository.findById(id);
     }
-
     public boolean updateWorkout(Workout workout) {
         return workoutRepository.update(workout);
     }

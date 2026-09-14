@@ -6,6 +6,7 @@ import com.alba.cycleruncoach.domain.EnergyLevel;
 import com.alba.cycleruncoach.domain.SleepQuality;
 import com.alba.cycleruncoach.domain.Symptom;
 import com.alba.cycleruncoach.service.DailyCheckInService;
+import com.alba.cycleruncoach.exception.DuplicateResourceException;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -30,6 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.mockito.Mockito.doThrow;
 
 import com.alba.cycleruncoach.controller.mapper.DailyCheckInDtoMapper;
 import org.springframework.context.annotation.Import;
@@ -85,7 +87,14 @@ class DailyCheckInControllerTest {
 
         mockMvc.perform(get("/api/check-ins/99"))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(""));
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.error").value("Not Found"))
+                .andExpect(jsonPath("$.message")
+                        .value("Daily check-in with id 99 was not found"))
+                .andExpect(jsonPath("$.path")
+                        .value("/api/check-ins/99"))
+                .andExpect(jsonPath("$.fieldErrors").isEmpty());
     }
 
     @Test
@@ -110,7 +119,14 @@ class DailyCheckInControllerTest {
 
         mockMvc.perform(get("/api/check-ins/latest"))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(""));
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.error").value("Not Found"))
+                .andExpect(jsonPath("$.message")
+                        .value("No daily check-ins were found"))
+                .andExpect(jsonPath("$.path")
+                        .value("/api/check-ins/latest"))
+                .andExpect(jsonPath("$.fieldErrors").isEmpty());
     }
 
     @Test
@@ -155,7 +171,14 @@ class DailyCheckInControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(updateDailyCheckInJson()))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(""));
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.error").value("Not Found"))
+                .andExpect(jsonPath("$.message")
+                        .value("Daily check-in with id 99 was not found"))
+                .andExpect(jsonPath("$.path")
+                        .value("/api/check-ins/99"))
+                .andExpect(jsonPath("$.fieldErrors").isEmpty());
     }
 
     @Test
@@ -170,7 +193,9 @@ class DailyCheckInControllerTest {
         mockMvc.perform(put("/api/check-ins/2")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(requestBody))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.fieldErrors.sleepHours")
+                        .value("Sleep hours must be at most 24"));
 
         verify(dailyCheckInService, never())
                 .updateDailyCheckIn(any(DailyCheckIn.class));
@@ -197,7 +222,14 @@ class DailyCheckInControllerTest {
 
         mockMvc.perform(delete("/api/check-ins/99"))
                 .andExpect(status().isNotFound())
-                .andExpect(content().string(""));
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.status").value(404))
+                .andExpect(jsonPath("$.error").value("Not Found"))
+                .andExpect(jsonPath("$.message")
+                        .value("Daily check-in with id 99 was not found"))
+                .andExpect(jsonPath("$.path")
+                        .value("/api/check-ins/99"))
+                .andExpect(jsonPath("$.fieldErrors").isEmpty());
     }
 
     private DailyCheckIn createDailyCheckIn(Long id) {
@@ -344,5 +376,41 @@ class DailyCheckInControllerTest {
                         )
                 )
         );
+    }
+
+    @Test
+    void createDailyCheckIn_returnsConflict_whenIdAlreadyExists()
+            throws Exception {
+        doThrow(new DuplicateResourceException(
+                "Daily check-in with id 1 already exists"
+        )).when(dailyCheckInService)
+                .saveDailyCheckIn(any(DailyCheckIn.class));
+
+        mockMvc.perform(post("/api/check-ins")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(dailyCheckInJson(1L)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.error").value("Conflict"))
+                .andExpect(jsonPath("$.message")
+                        .value("Daily check-in with id 1 already exists"))
+                .andExpect(jsonPath("$.path")
+                        .value("/api/check-ins"))
+                .andExpect(jsonPath("$.fieldErrors").isEmpty());
+    }
+
+
+    @Test
+    void findDailyCheckInById_returnsBadRequest_whenIdIsNotPositive()
+            throws Exception {
+        mockMvc.perform(get("/api/check-ins/0"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.error").value("Bad Request"))
+                .andExpect(jsonPath("$.message")
+                        .value("Request validation failed"))
+                .andExpect(jsonPath("$.path")
+                        .value("/api/check-ins/0"));
     }
 }

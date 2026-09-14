@@ -3,6 +3,7 @@ package com.alba.cycleruncoach.repository;
 import com.alba.cycleruncoach.domain.Workout;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface WorkoutRepository {
 
@@ -10,7 +11,7 @@ public interface WorkoutRepository {
 
     List<Workout> findAll();
 
-    Workout findById(Long id);
+    Optional<Workout> findById(Long id);
 
     boolean update(Workout workout);
 
