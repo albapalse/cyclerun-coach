@@ -3,6 +3,7 @@ package com.alba.cycleruncoach.repository.jpa;
 import com.alba.cycleruncoach.domain.DailyCheckIn;
 import com.alba.cycleruncoach.repository.DailyCheckInRepository;
 import org.springframework.stereotype.Repository;
+import com.alba.cycleruncoach.exception.DuplicateResourceException;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +25,7 @@ public class JpaDailyCheckInRepositoryAdapter
         validateDailyCheckIn(dailyCheckIn);
 
         if (repository.existsById(dailyCheckIn.getId())) {
-            throw new IllegalArgumentException(
+            throw new DuplicateResourceException(
                     "Daily check-in with id "
                             + dailyCheckIn.getId()
                             + " already exists"

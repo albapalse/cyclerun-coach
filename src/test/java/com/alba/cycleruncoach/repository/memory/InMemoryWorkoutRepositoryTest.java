@@ -7,10 +7,10 @@ import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -92,9 +92,10 @@ class InMemoryWorkoutRepositoryTest {
         repository.save(firstWorkout);
         repository.save(secondWorkout);
 
-        Workout workout = repository.findById(111L);
+        Optional<Workout> workout = repository.findById(111L);
 
-        assertEquals(firstWorkout, workout);
+        assertTrue(workout.isPresent());
+        assertEquals(firstWorkout, workout.orElseThrow());
     }
 
     @Test
@@ -131,12 +132,12 @@ class InMemoryWorkoutRepositoryTest {
     }
 
     @Test
-    void findById_returnsNull_whenWorkoutDoesNotExist() {
+    void findById_returnsEmpty_whenWorkoutDoesNotExist() {
         InMemoryWorkoutRepository repository = new InMemoryWorkoutRepository();
 
-        Workout workout = repository.findById(111L);
+        Optional<Workout> workout = repository.findById(111L);
 
-        assertNull(workout);
+        assertTrue(workout.isEmpty());
     }
 
     @Test
@@ -165,7 +166,10 @@ class InMemoryWorkoutRepositoryTest {
         boolean updated = repository.update(updatedWorkout);
 
         assertTrue(updated);
-        assertEquals(updatedWorkout, repository.findById(111L));
+        assertEquals(
+                updatedWorkout,
+                repository.findById(111L).orElseThrow()
+        );
         assertEquals(1, repository.findAll().size());
     }
 

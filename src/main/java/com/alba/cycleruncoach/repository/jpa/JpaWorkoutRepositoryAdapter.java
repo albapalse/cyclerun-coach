@@ -3,8 +3,10 @@ package com.alba.cycleruncoach.repository.jpa;
 import com.alba.cycleruncoach.domain.Workout;
 import com.alba.cycleruncoach.repository.WorkoutRepository;
 import org.springframework.stereotype.Repository;
+import com.alba.cycleruncoach.exception.DuplicateResourceException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public class JpaWorkoutRepositoryAdapter implements WorkoutRepository {
@@ -22,8 +24,8 @@ public class JpaWorkoutRepositoryAdapter implements WorkoutRepository {
         validateWorkout(workout);
 
         if (repository.existsById(workout.getId())) {
-            throw new IllegalArgumentException(
-                    "Workout with this id already exists"
+            throw new DuplicateResourceException(
+                    "Workout with id " + workout.getId() + " already exists"
             );
         }
 
@@ -39,12 +41,11 @@ public class JpaWorkoutRepositoryAdapter implements WorkoutRepository {
     }
 
     @Override
-    public Workout findById(Long id) {
+    public Optional<Workout> findById(Long id) {
         validateId(id);
 
         return repository.findById(id)
-                .map(WorkoutJpaMapper::toDomain)
-                .orElse(null);
+                .map(WorkoutJpaMapper::toDomain);
     }
 
     @Override

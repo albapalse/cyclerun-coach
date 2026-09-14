@@ -14,7 +14,6 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -30,7 +29,7 @@ class WorkoutServiceTest {
 
     @Test
     void calculateTotalDistanceByType_returnsCorrectValue() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
 
         Workout workout1 = new Workout(222L,
                 LocalDate.of(2026, 7, 1),
@@ -73,7 +72,7 @@ class WorkoutServiceTest {
 
     @Test
     void calculateAverageDistanceByCyclePhase_returnsCorrectAverage() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
 
         Workout workout1 = new Workout(222L,
                 LocalDate.of(2026, 7, 1),
@@ -116,7 +115,7 @@ class WorkoutServiceTest {
 
     @Test
     void calculateAverageDistanceByCyclePhase_returnsZero_whenNoWorkoutsInPhase() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
 
         Workout workout1 = new Workout(555L,
                 LocalDate.of(2026, 7, 1),
@@ -274,13 +273,13 @@ class WorkoutServiceTest {
         );
         workoutService.saveWorkout(workout);
         workoutService.saveWorkout(workout2);
-        Workout foundWorkout = workoutService.findWorkoutById(777L);
+        Workout foundWorkout = workoutService.findWorkoutById(777L).orElseThrow();
         assertEquals(workout, foundWorkout);
 
     }
 
     @Test
-    void findWorkoutById_returnsNull_whenWorkoutDoesNotExist() {
+    void findWorkoutById_returnsEmpty_whenWorkoutDoesNotExist() {
 
         Workout workout = new Workout(666L,
                 LocalDate.of(2026, 7, 2),
@@ -291,8 +290,7 @@ class WorkoutServiceTest {
                 CyclePhase.FOLLICULAR
         );
         workoutService.saveWorkout(workout);
-        Workout foundWorkout = workoutService.findWorkoutById(777L);
-        assertNull(foundWorkout);
+        assertTrue(workoutService.findWorkoutById(777L).isEmpty());
 
     }
 
@@ -326,7 +324,10 @@ class WorkoutServiceTest {
         boolean updated = workoutService.updateWorkout(updatedWorkout);
 
         assertTrue(updated);
-        assertEquals(updatedWorkout, workoutService.findWorkoutById(777L));
+        assertEquals(
+                updatedWorkout,
+                workoutService.findWorkoutById(777L).orElseThrow()
+        );
     }
 
     @Test
@@ -362,7 +363,7 @@ class WorkoutServiceTest {
         workoutService.saveWorkout(workout);
 
         assertTrue(workoutService.deleteWorkoutById(777L));
-        assertNull(workoutService.findWorkoutById(777L));
+        assertTrue(workoutService.findWorkoutById(777L).isEmpty());
 
     }
 

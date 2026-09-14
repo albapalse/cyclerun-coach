@@ -2,6 +2,7 @@ package com.alba.cycleruncoach.controller;
 
 import com.alba.cycleruncoach.domain.Workout;
 import com.alba.cycleruncoach.service.WorkoutService;
+import com.alba.cycleruncoach.exception.ResourceNotFoundException;
 
 import java.util.List;
 
@@ -20,6 +21,7 @@ import com.alba.cycleruncoach.controller.dto.WorkoutResponse;
 import com.alba.cycleruncoach.controller.mapper.WorkoutDtoMapper;
 import com.alba.cycleruncoach.controller.dto.UpdateWorkoutRequest;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 
 @RestController
 @RequestMapping("/api/workouts")
@@ -47,13 +49,13 @@ public class WorkoutController {
 
     @GetMapping("/{id}")
     public ResponseEntity<WorkoutResponse> findWorkoutById(
-            @PathVariable Long id
+            @PathVariable @Positive(message = "Id must be greater than zero") Long id
     ) {
-        Workout workout = workoutService.findWorkoutById(id);
-
-        if (workout == null) {
-            return ResponseEntity.notFound().build();
-        }
+        Workout workout = workoutService
+                .findWorkoutById(id)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Workout with id " + id + " was not found"
+                ));
 
         return ResponseEntity.ok(
                 workoutDtoMapper.toResponse(workout)
@@ -75,7 +77,7 @@ public class WorkoutController {
 
     @PutMapping("/{id}")
     public ResponseEntity<WorkoutResponse> updateWorkout(
-            @PathVariable Long id,
+            @PathVariable @Positive(message = "Id must be greater than zero") Long id,
             @Valid @RequestBody UpdateWorkoutRequest request
     ) {
         Workout workout = workoutDtoMapper.toDomain(id, request);
@@ -83,7 +85,9 @@ public class WorkoutController {
         boolean updated = workoutService.updateWorkout(workout);
 
         if (!updated) {
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException(
+                    "Workout with id " + id + " was not found"
+            );
         }
 
         return ResponseEntity.ok(
@@ -92,12 +96,14 @@ public class WorkoutController {
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteWorkout(
-            @PathVariable Long id
+            @PathVariable @Positive(message = "Id must be greater than zero") Long id
     ) {
         boolean deleted = workoutService.deleteWorkoutById(id);
 
         if (!deleted) {
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException(
+                    "Workout with id " + id + " was not found"
+            );
         }
 
         return ResponseEntity.noContent().build();

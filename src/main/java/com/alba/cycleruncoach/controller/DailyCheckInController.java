@@ -6,10 +6,12 @@ import com.alba.cycleruncoach.controller.dto.UpdateDailyCheckInRequest;
 import com.alba.cycleruncoach.controller.mapper.DailyCheckInDtoMapper;
 import com.alba.cycleruncoach.domain.DailyCheckIn;
 import com.alba.cycleruncoach.service.DailyCheckInService;
+import com.alba.cycleruncoach.exception.ResourceNotFoundException;
 
 import java.util.List;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -48,22 +50,30 @@ public class DailyCheckInController {
 
     @GetMapping("/latest")
     public ResponseEntity<DailyCheckInResponse> findLatestDailyCheckIn() {
-        return dailyCheckInService
+        DailyCheckIn dailyCheckIn = dailyCheckInService
                 .findLatestDailyCheckIn()
-                .map(dailyCheckInDtoMapper::toResponse)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "No daily check-ins were found"
+                ));
+
+        return ResponseEntity.ok(
+                dailyCheckInDtoMapper.toResponse(dailyCheckIn)
+        );
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<DailyCheckInResponse> findDailyCheckInById(
-            @PathVariable Long id
+            @PathVariable @Positive(message = "Id must be greater than zero") Long id
     ) {
-        return dailyCheckInService
+        DailyCheckIn dailyCheckIn = dailyCheckInService
                 .findDailyCheckInById(id)
-                .map(dailyCheckInDtoMapper::toResponse)
-                .map(ResponseEntity::ok)
-                .orElseGet(() -> ResponseEntity.notFound().build());
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Daily check-in with id " + id + " was not found"
+                ));
+
+        return ResponseEntity.ok(
+                dailyCheckInDtoMapper.toResponse(dailyCheckIn)
+        );
     }
 
     @PostMapping
@@ -82,7 +92,7 @@ public class DailyCheckInController {
 
     @PutMapping("/{id}")
     public ResponseEntity<DailyCheckInResponse> updateDailyCheckIn(
-            @PathVariable Long id,
+            @PathVariable @Positive(message = "Id must be greater than zero") Long id,
             @Valid @RequestBody UpdateDailyCheckInRequest request
     ) {
         DailyCheckIn dailyCheckIn =
@@ -92,7 +102,9 @@ public class DailyCheckInController {
                 dailyCheckInService.updateDailyCheckIn(dailyCheckIn);
 
         if (!updated) {
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException(
+                    "Daily check-in with id " + id + " was not found"
+            );
         }
 
         return ResponseEntity.ok(
@@ -102,13 +114,15 @@ public class DailyCheckInController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDailyCheckIn(
-            @PathVariable Long id
+            @PathVariable @Positive(message = "Id must be greater than zero") Long id
     ) {
         boolean deleted =
                 dailyCheckInService.deleteDailyCheckInById(id);
 
         if (!deleted) {
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException(
+                    "Daily check-in with id " + id + " was not found"
+            );
         }
 
         return ResponseEntity.noContent().build();

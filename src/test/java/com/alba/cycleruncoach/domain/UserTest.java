@@ -17,7 +17,7 @@ class UserTest {
 
     @Test
     void constructor_createsUserWithValidData() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
 
         assertEquals("Alba", user.getUsername());
         assertTrue(user.getWorkouts().isEmpty());
@@ -26,35 +26,21 @@ class UserTest {
     @Test
     void constructor_throwsException_whenUsernameIsNull() {
         assertThrows(IllegalArgumentException.class, () -> {
-            new User(null, "123");
+            new User(null);
         });
     }
 
     @Test
     void constructor_throwsException_whenUsernameIsBlank() {
         assertThrows(IllegalArgumentException.class, () -> {
-            new User(" ", "123");
-        });
-    }
-
-    @Test
-    void constructor_throwsException_whenPasswordIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new User("Alba", null);
-        });
-    }
-
-    @Test
-    void constructor_throwsException_whenPasswordIsBlank() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new User("Alba", " ");
+            new User(" ");
         });
     }
 
 
     @Test
     void addWorkout_addsWorkoutToUser() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
         Workout workout = new Workout(111L, LocalDate.of(2026, 7, 1), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
 
         user.addWorkout(workout);
@@ -65,7 +51,7 @@ class UserTest {
 
     @Test
     void addWorkout_throwsException_whenWorkoutIsNull() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
 
         assertThrows(IllegalArgumentException.class, () -> {
             user.addWorkout(null);
@@ -74,7 +60,7 @@ class UserTest {
 
     @Test
     void addWorkout_throwsException_whenWorkoutAlreadyExists() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
         Workout workout = new Workout(111L, LocalDate.of(2026, 7, 1), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
 
         user.addWorkout(workout);
@@ -86,7 +72,7 @@ class UserTest {
 
     @Test
     void removeWorkout_removesExistingWorkout() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
         Workout workout = new Workout(111L, LocalDate.of(2026, 7, 1), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
 
         user.addWorkout(workout);
@@ -100,7 +86,7 @@ class UserTest {
 
     @Test
     void removeWorkout_returnsFalse_whenWorkoutDoesNotExist() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
         Workout workout = new Workout(111L, LocalDate.of(2026, 7, 1), 10.0, 50, 6 , WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
 
         boolean removed = user.removeWorkout(workout);
@@ -111,7 +97,7 @@ class UserTest {
 
     @Test
     void calculateTotalKms_returnsCorrectKms() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
 
         Workout workout1 = new Workout(111L, LocalDate.of(2026, 7, 1), 10.0, 50, 6,  WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
         Workout workout2 = new Workout(122L, LocalDate.of(2026, 7, 2), 12.0, 60, 5, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
@@ -126,7 +112,7 @@ class UserTest {
 
     @Test
     void getWorkouts_returnsCopyOfInternalList() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
         Workout workout = new Workout(111L, LocalDate.of(2026, 7, 1), 10.0, 50, 6,  WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
 
         user.addWorkout(workout);
@@ -139,7 +125,7 @@ class UserTest {
 
     @Test
     void countWorkouts_returnsCorrectCount() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
 
         Workout workout1 = new Workout(112L, LocalDate.of(2026, 07, 01), 10.0, 52, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
         Workout workout2 = new Workout(123L, LocalDate.of(2026, 07, 02), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
@@ -151,7 +137,7 @@ class UserTest {
 
     @Test
     void getWorkoutsByType_returnsCorrectList() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
         Workout workout1 = new Workout(111L, LocalDate.of(2026, 07, 01), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
         Workout workout2 = new Workout(123L, LocalDate.of(2026, 07, 02), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
 
@@ -164,7 +150,7 @@ class UserTest {
 
     @Test
     void getWorkoutsByType_returnsOnlyWorkoutsOfGivenType() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
 
         Workout easyRun = new Workout(123L,
                 LocalDate.of(2026, 7, 1),
@@ -196,7 +182,7 @@ class UserTest {
 
     @Test
     void getWorkoutsByType_throwsException_whenTypeIsNull() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
         assertThrows(IllegalArgumentException.class, () -> {
             user.getWorkoutsByType(null);
         });
@@ -204,7 +190,7 @@ class UserTest {
     }
     @Test
     void getWorkoutsByCyclePhase_returnsOnlyWorkoutsOfGivenCyclePhase() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
 
         Workout follicularWorkout = new Workout(234L,
                 LocalDate.of(2026, 7, 1),
@@ -236,7 +222,7 @@ class UserTest {
 
     @Test
     void getWorkoutsByCyclePhase_throwsException_whenCyclePhaseIsNull() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
         assertThrows(
                 IllegalArgumentException.class,
                 () -> user.getWorkoutsByCyclePhase(null)
@@ -246,7 +232,7 @@ class UserTest {
 
     @Test
     void countHighIntensityWorkouts_returnsCorrectCount() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
         Workout workout1 = new Workout(123L, LocalDate.of(2026, 07, 01), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
         Workout workout2 = new Workout(122L, LocalDate.of(2026, 07, 02), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.OVULATORY);
 
@@ -260,7 +246,7 @@ class UserTest {
 
     @Test
     void calculateAveragePace_returnsCorrectAveragePace() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
         Workout workout1 = new Workout(111L, LocalDate.of(2026, 07, 01), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
         Workout workout2 = new Workout(123L, LocalDate.of(2026, 07, 02), 10.0, 50, 6, WorkoutType.INTERVALS, CyclePhase.OVULATORY);
 
@@ -273,14 +259,14 @@ class UserTest {
 
     @Test
     void calculateAveragePace_returnsZeroWhenNoWorkouts() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
         double averagePace = user.calculateAveragePace();
         assertEquals(0.0, averagePace, 0.0001);
     }
 
     @Test
     void getUsedWorkoutTypes_returnsCorrectTypes() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
         Workout easyRun1 = new Workout(111L,
                 LocalDate.of(2026, 7, 1),
                 8.0,
@@ -322,7 +308,7 @@ class UserTest {
 
     @Test
     void countWorkoutsByType_returnsCorrectCount() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
         Workout easyRun1 = new Workout(111L,
                 LocalDate.of(2026, 7, 1),
                 8.0,
@@ -362,7 +348,7 @@ class UserTest {
 
     @Test
     void groupWorkoutsByCyclePhase_returnsCorrectGroup() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
 
         Workout follicularWorkout1 = new Workout(111L,
                 LocalDate.of(2026, 7, 1),
@@ -408,7 +394,7 @@ class UserTest {
 
     @Test
     void addWorkout_throwsException_whenEquivalentWorkoutAlreadyExists() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
         Workout workout1 = new Workout(111L, LocalDate.of(2026,7,11),18,95,7,WorkoutType.LONG_RUN,CyclePhase.FOLLICULAR);
         Workout workout2 = new Workout(111L, LocalDate.of(2026,7,11),18,95,7,WorkoutType.LONG_RUN,CyclePhase.FOLLICULAR);
 
@@ -418,7 +404,7 @@ class UserTest {
     }
     @Test
     void getWorkoutsSortedByDate_returnsWorkoutsOrderedByDate() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
 
         Workout workout1 = new Workout(
                 111L,
@@ -463,7 +449,7 @@ class UserTest {
 
     @Test
     void getWorkoutsByMinimumDistance_returnsWorkoutsWithDistanceGreaterOrEqualThanMinimum() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
 
         Workout shortWorkout = new Workout(
                 111L,
@@ -508,7 +494,7 @@ class UserTest {
     }
     @Test
     void getWorkoutsByMinimumDistance_throwsException_whenMinimumDistanceIsZero() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
 
         assertThrows(IllegalArgumentException.class, () -> {
             user.getWorkoutsByMinimumDistance(0.0);
@@ -516,7 +502,7 @@ class UserTest {
     }
     @Test
     void getWorkoutsByMinimumDistance_throwsException_whenMinimumDistanceIsNegative() {
-        User user = new User("Alba", "123");
+        User user = new User("Alba");
 
         assertThrows(IllegalArgumentException.class, () -> {
             user.getWorkoutsByMinimumDistance(-5.0);
