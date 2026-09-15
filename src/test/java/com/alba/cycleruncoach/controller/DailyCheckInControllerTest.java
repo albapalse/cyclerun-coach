@@ -91,7 +91,7 @@ class DailyCheckInControllerTest {
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.error").value("Not Found"))
                 .andExpect(jsonPath("$.message")
-                        .value("Daily check-in with id 99 was not found"))
+                        .value("We couldn't find a daily check-in with ID 99."))
                 .andExpect(jsonPath("$.path")
                         .value("/api/check-ins/99"))
                 .andExpect(jsonPath("$.fieldErrors").isEmpty());
@@ -123,7 +123,7 @@ class DailyCheckInControllerTest {
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.error").value("Not Found"))
                 .andExpect(jsonPath("$.message")
-                        .value("No daily check-ins were found"))
+                        .value("No daily check-ins are available yet."))
                 .andExpect(jsonPath("$.path")
                         .value("/api/check-ins/latest"))
                 .andExpect(jsonPath("$.fieldErrors").isEmpty());
@@ -175,7 +175,7 @@ class DailyCheckInControllerTest {
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.error").value("Not Found"))
                 .andExpect(jsonPath("$.message")
-                        .value("Daily check-in with id 99 was not found"))
+                        .value("We couldn't find a daily check-in with ID 99."))
                 .andExpect(jsonPath("$.path")
                         .value("/api/check-ins/99"))
                 .andExpect(jsonPath("$.fieldErrors").isEmpty());
@@ -195,7 +195,7 @@ class DailyCheckInControllerTest {
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.fieldErrors.sleepHours")
-                        .value("Sleep hours must be at most 24"));
+                        .value("Sleep hours must be between 0 and 24."));
 
         verify(dailyCheckInService, never())
                 .updateDailyCheckIn(any(DailyCheckIn.class));
@@ -226,7 +226,7 @@ class DailyCheckInControllerTest {
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.error").value("Not Found"))
                 .andExpect(jsonPath("$.message")
-                        .value("Daily check-in with id 99 was not found"))
+                        .value("We couldn't find a daily check-in with ID 99."))
                 .andExpect(jsonPath("$.path")
                         .value("/api/check-ins/99"))
                 .andExpect(jsonPath("$.fieldErrors").isEmpty());
@@ -382,7 +382,7 @@ class DailyCheckInControllerTest {
     void createDailyCheckIn_returnsConflict_whenIdAlreadyExists()
             throws Exception {
         doThrow(new DuplicateResourceException(
-                "Daily check-in with id 1 already exists"
+                "A daily check-in with ID 1 already exists. Please use a different ID."
         )).when(dailyCheckInService)
                 .saveDailyCheckIn(any(DailyCheckIn.class));
 
@@ -394,7 +394,7 @@ class DailyCheckInControllerTest {
                 .andExpect(jsonPath("$.status").value(409))
                 .andExpect(jsonPath("$.error").value("Conflict"))
                 .andExpect(jsonPath("$.message")
-                        .value("Daily check-in with id 1 already exists"))
+                        .value("A daily check-in with ID 1 already exists. Please use a different ID."))
                 .andExpect(jsonPath("$.path")
                         .value("/api/check-ins"))
                 .andExpect(jsonPath("$.fieldErrors").isEmpty());
@@ -409,7 +409,7 @@ class DailyCheckInControllerTest {
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.error").value("Bad Request"))
                 .andExpect(jsonPath("$.message")
-                        .value("Request validation failed"))
+                        .value("Some request fields are invalid. Please review the field errors."))
                 .andExpect(jsonPath("$.path")
                         .value("/api/check-ins/0"));
     }

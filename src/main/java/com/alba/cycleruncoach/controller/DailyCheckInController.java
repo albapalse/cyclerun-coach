@@ -53,7 +53,7 @@ public class DailyCheckInController {
         DailyCheckIn dailyCheckIn = dailyCheckInService
                 .findLatestDailyCheckIn()
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "No daily check-ins were found"
+                        "No daily check-ins are available yet."
                 ));
 
         return ResponseEntity.ok(
@@ -63,12 +63,12 @@ public class DailyCheckInController {
 
     @GetMapping("/{id}")
     public ResponseEntity<DailyCheckInResponse> findDailyCheckInById(
-            @PathVariable @Positive(message = "Id must be greater than zero") Long id
+            @PathVariable @Positive(message = "Please use an ID greater than zero.") Long id
     ) {
         DailyCheckIn dailyCheckIn = dailyCheckInService
                 .findDailyCheckInById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Daily check-in with id " + id + " was not found"
+                        "We couldn't find a daily check-in with ID " + id + "."
                 ));
 
         return ResponseEntity.ok(
@@ -92,7 +92,7 @@ public class DailyCheckInController {
 
     @PutMapping("/{id}")
     public ResponseEntity<DailyCheckInResponse> updateDailyCheckIn(
-            @PathVariable @Positive(message = "Id must be greater than zero") Long id,
+            @PathVariable @Positive(message = "Please use an ID greater than zero.") Long id,
             @Valid @RequestBody UpdateDailyCheckInRequest request
     ) {
         DailyCheckIn dailyCheckIn =
@@ -103,7 +103,7 @@ public class DailyCheckInController {
 
         if (!updated) {
             throw new ResourceNotFoundException(
-                    "Daily check-in with id " + id + " was not found"
+                    "We couldn't find a daily check-in with ID " + id + "."
             );
         }
 
@@ -114,14 +114,14 @@ public class DailyCheckInController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteDailyCheckIn(
-            @PathVariable @Positive(message = "Id must be greater than zero") Long id
+            @PathVariable @Positive(message = "Please use an ID greater than zero.") Long id
     ) {
         boolean deleted =
                 dailyCheckInService.deleteDailyCheckInById(id);
 
         if (!deleted) {
             throw new ResourceNotFoundException(
-                    "Daily check-in with id " + id + " was not found"
+                    "We couldn't find a daily check-in with ID " + id + "."
             );
         }
 

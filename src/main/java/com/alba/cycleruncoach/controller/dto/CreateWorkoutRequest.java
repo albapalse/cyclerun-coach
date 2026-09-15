@@ -14,35 +14,35 @@ import jakarta.validation.constraints.Positive;
 
 public record CreateWorkoutRequest(
 
-        @NotNull(message = "Id is required")
-        @Positive(message = "Id must be greater than zero")
+        @NotNull(message = "Please provide an ID.")
+        @Positive(message = "Please use an ID greater than zero.")
         Long id,
 
-        @NotNull(message = "Date is required")
-        @PastOrPresent(message = "Date cannot be in the future")
+        @NotNull(message = "Please provide a date.")
+        @PastOrPresent(message = "Please use today or an earlier date.")
         LocalDate date,
 
-        @NotNull(message = "Distance is required")
+        @NotNull(message = "Please provide the distance in kilometers.")
         @DecimalMin(
                 value = "0.0",
                 inclusive = false,
-                message = "Distance must be greater than zero"
+                message = "Please enter a distance greater than zero."
         )
         Double distanceKm,
 
-        @NotNull(message = "Duration is required")
-        @Positive(message = "Duration must be greater than zero")
+        @NotNull(message = "Please provide the duration in minutes.")
+        @Positive(message = "Please enter a duration greater than zero.")
         Integer durationMinutes,
 
-        @NotNull(message = "Perceived effort is required")
-        @Min(value = 1, message = "Perceived effort must be at least 1")
-        @Max(value = 10, message = "Perceived effort must be at most 10")
+        @NotNull(message = "Please provide your perceived effort.")
+        @Min(value = 1, message = "Perceived effort must be between 1 and 10.")
+        @Max(value = 10, message = "Perceived effort must be between 1 and 10.")
         Integer perceivedEffort,
 
-        @NotNull(message = "Workout type is required")
+        @NotNull(message = "Please select a workout type.")
         WorkoutType workoutType,
 
-        @NotNull(message = "Cycle phase is required")
+        @NotNull(message = "Please select a cycle phase.")
         CyclePhase cyclePhase
 ) {
 }

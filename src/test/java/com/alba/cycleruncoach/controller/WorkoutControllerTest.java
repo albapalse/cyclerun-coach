@@ -95,7 +95,7 @@ class WorkoutControllerTest {
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.error").value("Not Found"))
                 .andExpect(jsonPath("$.message")
-                        .value("Workout with id 99 was not found"))
+                        .value("We couldn't find a workout with ID 99."))
                 .andExpect(jsonPath("$.path")
                         .value("/api/workouts/99"))
                 .andExpect(jsonPath("$.fieldErrors").isEmpty());
@@ -177,7 +177,7 @@ class WorkoutControllerTest {
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.error").value("Not Found"))
                 .andExpect(jsonPath("$.message")
-                        .value("Workout with id 99 was not found"))
+                        .value("We couldn't find a workout with ID 99."))
                 .andExpect(jsonPath("$.path").value("/api/workouts/99"))
                 .andExpect(jsonPath("$.fieldErrors").isEmpty());
     }
@@ -201,7 +201,7 @@ class WorkoutControllerTest {
                         .content(requestBody))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.fieldErrors.distanceKm")
-                        .value("Distance must be greater than zero"));
+                        .value("Please enter a distance greater than zero."));
 
         verify(workoutService, never())
                 .updateWorkout(any(Workout.class));
@@ -232,7 +232,7 @@ class WorkoutControllerTest {
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.error").value("Not Found"))
                 .andExpect(jsonPath("$.message")
-                        .value("Workout with id 99 was not found"))
+                        .value("We couldn't find a workout with ID 99."))
                 .andExpect(jsonPath("$.path").value("/api/workouts/99"))
                 .andExpect(jsonPath("$.fieldErrors").isEmpty());
     }
@@ -330,7 +330,7 @@ class WorkoutControllerTest {
     void createWorkout_returnsConflict_whenIdAlreadyExists()
             throws Exception {
         doThrow(new DuplicateResourceException(
-                "Workout with id 1 already exists"
+                "A workout with ID 1 already exists. Please use a different ID."
         )).when(workoutService).saveWorkout(any(Workout.class));
 
         mockMvc.perform(post("/api/workouts")
@@ -341,7 +341,7 @@ class WorkoutControllerTest {
                 .andExpect(jsonPath("$.status").value(409))
                 .andExpect(jsonPath("$.error").value("Conflict"))
                 .andExpect(jsonPath("$.message")
-                        .value("Workout with id 1 already exists"))
+                        .value("A workout with ID 1 already exists. Please use a different ID."))
                 .andExpect(jsonPath("$.path")
                         .value("/api/workouts"))
                 .andExpect(jsonPath("$.fieldErrors").isEmpty());
@@ -361,11 +361,11 @@ class WorkoutControllerTest {
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.error").value("Bad Request"))
                 .andExpect(jsonPath("$.message")
-                        .value("Request validation failed"))
+                        .value("Some request fields are invalid. Please review the field errors."))
                 .andExpect(jsonPath("$.path")
                         .value("/api/workouts"))
                 .andExpect(jsonPath("$.fieldErrors.distanceKm")
-                        .value("Distance is required"));
+                        .value("Please provide the distance in kilometers."));
 
         verify(workoutService, never())
                 .saveWorkout(any(Workout.class));
@@ -387,7 +387,7 @@ class WorkoutControllerTest {
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.error").value("Bad Request"))
                 .andExpect(jsonPath("$.message")
-                        .value("Malformed or unreadable JSON request"))
+                        .value("We couldn't read the request. Please check the JSON format and values."))
                 .andExpect(jsonPath("$.path")
                         .value("/api/workouts"))
                 .andExpect(jsonPath("$.fieldErrors").isEmpty());
@@ -410,7 +410,7 @@ class WorkoutControllerTest {
                 .andExpect(jsonPath("$.error")
                         .value("Internal Server Error"))
                 .andExpect(jsonPath("$.message")
-                        .value("An unexpected error occurred"))
+                        .value("We couldn't complete your request. Please try again later."))
                 .andExpect(jsonPath("$.path")
                         .value("/api/workouts"))
                 .andExpect(jsonPath("$.fieldErrors").isEmpty());
@@ -425,7 +425,7 @@ class WorkoutControllerTest {
                 .andExpect(jsonPath("$.status").value(400))
                 .andExpect(jsonPath("$.error").value("Bad Request"))
                 .andExpect(jsonPath("$.message")
-                        .value("Request validation failed"))
+                        .value("Some request fields are invalid. Please review the field errors."))
                 .andExpect(jsonPath("$.path")
                         .value("/api/workouts/0"));
     }

@@ -117,7 +117,7 @@ class JpaDailyCheckInRepositoryAdapterTest {
         );
 
         assertEquals(
-                "Daily check-in with id 1 already exists",
+                "A daily check-in with ID 1 already exists. Please use a different ID.",
                 exception.getMessage()
         );
     }

@@ -22,7 +22,7 @@ public class InMemoryWorkoutRepository implements WorkoutRepository {
 
         if (findById(workout.getId()).isPresent()) {
             throw new DuplicateResourceException(
-                    "Workout with id " + workout.getId() + " already exists"
+                    "A workout with ID " + workout.getId() + " already exists. Please use a different ID."
             );
         }
 

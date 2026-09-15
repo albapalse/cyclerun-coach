@@ -23,9 +23,9 @@ public class InMemoryDailyCheckInRepository implements DailyCheckInRepository {
         validateDailyCheckIn(dailyCheckIn);
         if (dailyCheckIns.containsKey(dailyCheckIn.getId())) {
             throw new DuplicateResourceException(
-                    "Daily check-in with id "
+                    "A daily check-in with ID "
                             + dailyCheckIn.getId()
-                            + " already exists"
+                            + " already exists. Please use a different ID."
             );
         }
         dailyCheckIns.put(dailyCheckIn.getId(), dailyCheckIn);

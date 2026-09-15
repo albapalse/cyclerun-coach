@@ -15,30 +15,30 @@ import jakarta.validation.constraints.PastOrPresent;
 
 public record UpdateDailyCheckInRequest(
 
-        @NotNull(message = "Date is required")
-        @PastOrPresent(message = "Date cannot be in the future")
+        @NotNull(message = "Please provide a date.")
+        @PastOrPresent(message = "Please use today or an earlier date.")
         LocalDate date,
 
-        @NotNull(message = "Cycle phase is required")
+        @NotNull(message = "Please select a cycle phase.")
         CyclePhase cyclePhase,
 
-        @NotNull(message = "Energy level is required")
+        @NotNull(message = "Please select an energy level.")
         EnergyLevel energyLevel,
 
-        @NotNull(message = "Sleep quality is required")
+        @NotNull(message = "Please select a sleep quality.")
         SleepQuality sleepQuality,
 
-        @NotNull(message = "Symptoms are required")
-        Set<@NotNull(message = "Symptoms cannot contain null") Symptom> symptoms,
+        @NotNull(message = "Please provide symptoms. Use an empty list if there are none.")
+        Set<@NotNull(message = "Please remove empty symptom values.") Symptom> symptoms,
 
-        @NotNull(message = "Sleep hours are required")
+        @NotNull(message = "Please provide the number of hours slept.")
         @DecimalMin(
                 value = "0.0",
-                message = "Sleep hours must be at least 0"
+                message = "Sleep hours must be between 0 and 24."
         )
         @DecimalMax(
                 value = "24.0",
-                message = "Sleep hours must be at most 24"
+                message = "Sleep hours must be between 0 and 24."
         )
         Double sleepHours
 ) {
