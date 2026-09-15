@@ -90,7 +90,7 @@ public class GlobalExceptionHandler {
 
         return buildResponse(
                 HttpStatus.BAD_REQUEST,
-                "Request validation failed",
+                "Some request fields are invalid. Please review the field errors.",
                 request.getRequestURI(),
                 fieldErrors
         );
@@ -103,7 +103,7 @@ public class GlobalExceptionHandler {
     ) {
         return buildResponse(
                 HttpStatus.BAD_REQUEST,
-                "Malformed or unreadable JSON request",
+                "We couldn't read the request. Please check the JSON format and values.",
                 request.getRequestURI()
         );
     }
@@ -138,7 +138,7 @@ public class GlobalExceptionHandler {
 
         return buildResponse(
                 HttpStatus.BAD_REQUEST,
-                "Request validation failed",
+                "Some request fields are invalid. Please review the field errors.",
                 request.getRequestURI(),
                 fieldErrors
         );
@@ -157,7 +157,7 @@ public class GlobalExceptionHandler {
 
         return buildResponse(
                 HttpStatus.INTERNAL_SERVER_ERROR,
-                "An unexpected error occurred",
+                "We couldn't complete your request. Please try again later.",
                 request.getRequestURI()
         );
     }

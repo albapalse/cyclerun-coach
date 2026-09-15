@@ -75,7 +75,7 @@ class JpaWorkoutRepositoryAdapterTest {
         );
 
         assertEquals(
-                "Workout with id 1 already exists",
+                "A workout with ID 1 already exists. Please use a different ID.",
                 exception.getMessage()
         );
     }

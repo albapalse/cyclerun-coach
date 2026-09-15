@@ -49,12 +49,12 @@ public class WorkoutController {
 
     @GetMapping("/{id}")
     public ResponseEntity<WorkoutResponse> findWorkoutById(
-            @PathVariable @Positive(message = "Id must be greater than zero") Long id
+            @PathVariable @Positive(message = "Please use an ID greater than zero.") Long id
     ) {
         Workout workout = workoutService
                 .findWorkoutById(id)
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "Workout with id " + id + " was not found"
+                        "We couldn't find a workout with ID " + id + "."
                 ));
 
         return ResponseEntity.ok(
@@ -77,7 +77,7 @@ public class WorkoutController {
 
     @PutMapping("/{id}")
     public ResponseEntity<WorkoutResponse> updateWorkout(
-            @PathVariable @Positive(message = "Id must be greater than zero") Long id,
+            @PathVariable @Positive(message = "Please use an ID greater than zero.") Long id,
             @Valid @RequestBody UpdateWorkoutRequest request
     ) {
         Workout workout = workoutDtoMapper.toDomain(id, request);
@@ -86,7 +86,7 @@ public class WorkoutController {
 
         if (!updated) {
             throw new ResourceNotFoundException(
-                    "Workout with id " + id + " was not found"
+                    "We couldn't find a workout with ID " + id + "."
             );
         }
 
@@ -96,13 +96,13 @@ public class WorkoutController {
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteWorkout(
-            @PathVariable @Positive(message = "Id must be greater than zero") Long id
+            @PathVariable @Positive(message = "Please use an ID greater than zero.") Long id
     ) {
         boolean deleted = workoutService.deleteWorkoutById(id);
 
         if (!deleted) {
             throw new ResourceNotFoundException(
-                    "Workout with id " + id + " was not found"
+                    "We couldn't find a workout with ID " + id + "."
             );
         }
 
