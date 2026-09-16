@@ -1,0 +1,5 @@
+@baseUrl = http://localhost:8080
+
+### Get a recommendation from the latest daily check-in
+GET {{baseUrl}}/api/recommendations/latest
+Accept: application/json
