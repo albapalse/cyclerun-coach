@@ -6,6 +6,7 @@ import com.alba.cycleruncoach.domain.EnergyLevel;
 import com.alba.cycleruncoach.domain.SleepQuality;
 import com.alba.cycleruncoach.domain.Symptom;
 import com.alba.cycleruncoach.repository.DailyCheckInRepository;
+import com.alba.cycleruncoach.exception.DuplicateResourceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -63,7 +64,7 @@ class InMemoryDailyCheckInRepositoryTest {
         DailyCheckIn secondCheckIn = createDailyCheckIn(1L);
         dailyCheckInRepository.save(firstCheckIn);
 
-        assertThrows(IllegalArgumentException.class, () -> dailyCheckInRepository.save(secondCheckIn));
+        assertThrows(DuplicateResourceException.class, () -> dailyCheckInRepository.save(secondCheckIn));
     }
 
     @Test

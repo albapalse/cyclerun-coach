@@ -5,6 +5,7 @@ import com.alba.cycleruncoach.domain.Workout;
 import com.alba.cycleruncoach.domain.WorkoutType;
 import com.alba.cycleruncoach.repository.WorkoutRepository;
 import com.alba.cycleruncoach.repository.memory.InMemoryWorkoutRepository;
+import com.alba.cycleruncoach.exception.DuplicateResourceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -69,7 +70,7 @@ class WorkoutServiceTest {
                 CyclePhase.FOLLICULAR
         );
         workoutService.saveWorkout(workout);
-        assertThrows(IllegalArgumentException.class, () -> workoutService.saveWorkout(workout1));
+        assertThrows(DuplicateResourceException.class, () -> workoutService.saveWorkout(workout1));
     }
 
     @Test
