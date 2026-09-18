@@ -1,23 +1,30 @@
 package com.alba.cycleruncoach.controller;
 
+import com.alba.cycleruncoach.controller.mapper.WorkoutDtoMapper;
 import com.alba.cycleruncoach.domain.CyclePhase;
 import com.alba.cycleruncoach.domain.Workout;
 import com.alba.cycleruncoach.domain.WorkoutType;
-import com.alba.cycleruncoach.service.WorkoutService;
 import com.alba.cycleruncoach.exception.DuplicateResourceException;
+import com.alba.cycleruncoach.service.WorkoutService;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -28,16 +35,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.mockito.Mockito.doThrow;
-
-import com.alba.cycleruncoach.controller.mapper.WorkoutDtoMapper;
-import org.springframework.context.annotation.Import;
-
-import java.util.stream.Stream;
-
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
 
 @WebMvcTest(WorkoutController.class)
 @Import(WorkoutDtoMapper.class)
@@ -252,6 +249,110 @@ class WorkoutControllerTest {
                 .saveWorkout(any(Workout.class));
     }
 
+    @Test
+    void createWorkout_returnsConflict_whenIdAlreadyExists()
+            throws Exception {
+        doThrow(new DuplicateResourceException(
+                "A workout with ID 1 already exists. Please use a different ID."
+        )).when(workoutService).saveWorkout(any(Workout.class));
+
+        mockMvc.perform(post("/api/workouts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(validCreateWorkoutJson()))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.error").value("Conflict"))
+                .andExpect(jsonPath("$.message")
+                        .value("A workout with ID 1 already exists. Please use a different ID."))
+                .andExpect(jsonPath("$.path")
+                        .value("/api/workouts"))
+                .andExpect(jsonPath("$.fieldErrors").isEmpty());
+    }
+
+    @Test
+    void createWorkout_returnsValidationDetails_whenDistanceIsMissing()
+            throws Exception {
+        String requestBody = validCreateWorkoutJson()
+                .replace("\"distanceKm\": 8.0,", "");
+
+        mockMvc.perform(post("/api/workouts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.error").value("Bad Request"))
+                .andExpect(jsonPath("$.message")
+                        .value("Some request values are invalid. Please review the details below."))
+                .andExpect(jsonPath("$.path")
+                        .value("/api/workouts"))
+                .andExpect(jsonPath("$.fieldErrors.distanceKm")
+                        .value("Please provide the distance in kilometers."));
+
+        verify(workoutService, never())
+                .saveWorkout(any(Workout.class));
+    }
+
+    @Test
+    void createWorkout_returnsReadableError_whenEnumIsUnknown()
+            throws Exception {
+        String requestBody = validCreateWorkoutJson()
+                .replace(
+                        "\"cyclePhase\": \"FOLLICULAR\"",
+                        "\"cyclePhase\": \"UNKNOWN\""
+                );
+
+        mockMvc.perform(post("/api/workouts")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(requestBody))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.error").value("Bad Request"))
+                .andExpect(jsonPath("$.message")
+                        .value("We couldn't read the request. Please check the JSON format and values."))
+                .andExpect(jsonPath("$.path")
+                        .value("/api/workouts"))
+                .andExpect(jsonPath("$.fieldErrors").isEmpty());
+
+        verify(workoutService, never())
+                .saveWorkout(any(Workout.class));
+    }
+
+    @Test
+    void findAllWorkouts_returnsInternalServerError_whenUnexpectedFailureOccurs()
+            throws Exception {
+        when(workoutService.findAllWorkouts())
+                .thenThrow(new RuntimeException(
+                        "Internal database connection details"
+                ));
+
+        mockMvc.perform(get("/api/workouts"))
+                .andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.status").value(500))
+                .andExpect(jsonPath("$.error")
+                        .value("Internal Server Error"))
+                .andExpect(jsonPath("$.message")
+                        .value("We couldn't complete your request. Please try again later."))
+                .andExpect(jsonPath("$.path")
+                        .value("/api/workouts"))
+                .andExpect(jsonPath("$.fieldErrors").isEmpty());
+    }
+
+    @Test
+    void findWorkoutById_returnsBadRequest_whenIdIsNotPositive()
+            throws Exception {
+        mockMvc.perform(get("/api/workouts/0"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.error").value("Bad Request"))
+                .andExpect(jsonPath("$.message")
+                        .value("Some request values are invalid. Please review the details below."))
+                .andExpect(jsonPath("$.path")
+                        .value("/api/workouts/0"));
+    }
     private static Stream<Arguments> invalidCreateWorkoutRequests() {
         String validRequest = validCreateWorkoutJson();
 
@@ -324,109 +425,5 @@ class WorkoutControllerTest {
               "cyclePhase": "FOLLICULAR"
             }
             """;
-    }
-
-    @Test
-    void createWorkout_returnsConflict_whenIdAlreadyExists()
-            throws Exception {
-        doThrow(new DuplicateResourceException(
-                "A workout with ID 1 already exists. Please use a different ID."
-        )).when(workoutService).saveWorkout(any(Workout.class));
-
-        mockMvc.perform(post("/api/workouts")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(validCreateWorkoutJson()))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.timestamp").exists())
-                .andExpect(jsonPath("$.status").value(409))
-                .andExpect(jsonPath("$.error").value("Conflict"))
-                .andExpect(jsonPath("$.message")
-                        .value("A workout with ID 1 already exists. Please use a different ID."))
-                .andExpect(jsonPath("$.path")
-                        .value("/api/workouts"))
-                .andExpect(jsonPath("$.fieldErrors").isEmpty());
-    }
-
-    @Test
-    void createWorkout_returnsValidationDetails_whenDistanceIsMissing()
-            throws Exception {
-        String requestBody = validCreateWorkoutJson()
-                .replace("\"distanceKm\": 8.0,", "");
-
-        mockMvc.perform(post("/api/workouts")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.timestamp").exists())
-                .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.error").value("Bad Request"))
-                .andExpect(jsonPath("$.message")
-                        .value("Some request fields are invalid. Please review the field errors."))
-                .andExpect(jsonPath("$.path")
-                        .value("/api/workouts"))
-                .andExpect(jsonPath("$.fieldErrors.distanceKm")
-                        .value("Please provide the distance in kilometers."));
-
-        verify(workoutService, never())
-                .saveWorkout(any(Workout.class));
-    }
-    @Test
-    void createWorkout_returnsReadableError_whenEnumIsUnknown()
-            throws Exception {
-        String requestBody = validCreateWorkoutJson()
-                .replace(
-                        "\"cyclePhase\": \"FOLLICULAR\"",
-                        "\"cyclePhase\": \"UNKNOWN\""
-                );
-
-        mockMvc.perform(post("/api/workouts")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(requestBody))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.timestamp").exists())
-                .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.error").value("Bad Request"))
-                .andExpect(jsonPath("$.message")
-                        .value("We couldn't read the request. Please check the JSON format and values."))
-                .andExpect(jsonPath("$.path")
-                        .value("/api/workouts"))
-                .andExpect(jsonPath("$.fieldErrors").isEmpty());
-
-        verify(workoutService, never())
-                .saveWorkout(any(Workout.class));
-    }
-    @Test
-    void findAllWorkouts_returnsInternalServerError_whenUnexpectedFailureOccurs()
-            throws Exception {
-        when(workoutService.findAllWorkouts())
-                .thenThrow(new RuntimeException(
-                        "Internal database connection details"
-                ));
-
-        mockMvc.perform(get("/api/workouts"))
-                .andExpect(status().isInternalServerError())
-                .andExpect(jsonPath("$.timestamp").exists())
-                .andExpect(jsonPath("$.status").value(500))
-                .andExpect(jsonPath("$.error")
-                        .value("Internal Server Error"))
-                .andExpect(jsonPath("$.message")
-                        .value("We couldn't complete your request. Please try again later."))
-                .andExpect(jsonPath("$.path")
-                        .value("/api/workouts"))
-                .andExpect(jsonPath("$.fieldErrors").isEmpty());
-    }
-
-
-    @Test
-    void findWorkoutById_returnsBadRequest_whenIdIsNotPositive()
-            throws Exception {
-        mockMvc.perform(get("/api/workouts/0"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.error").value("Bad Request"))
-                .andExpect(jsonPath("$.message")
-                        .value("Some request fields are invalid. Please review the field errors."))
-                .andExpect(jsonPath("$.path")
-                        .value("/api/workouts/0"));
     }
 }

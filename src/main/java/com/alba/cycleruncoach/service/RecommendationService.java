@@ -1,10 +1,10 @@
 package com.alba.cycleruncoach.service;
 
 import com.alba.cycleruncoach.domain.DailyCheckIn;
-import com.alba.cycleruncoach.domain.TrainingRecommendation;
 import com.alba.cycleruncoach.domain.EnergyLevel;
-import com.alba.cycleruncoach.domain.WorkoutType;
 import com.alba.cycleruncoach.domain.SleepQuality;
+import com.alba.cycleruncoach.domain.TrainingRecommendation;
+import com.alba.cycleruncoach.domain.WorkoutType;
 
 import org.springframework.stereotype.Service;
 
@@ -18,11 +18,13 @@ public class RecommendationService {
             );
         }
 
+        // Rules are ordered by priority, so the first match determines
+        // the recommendation.
         if (dailyCheckIn.getEnergyLevel() == EnergyLevel.EXHAUSTED) {
             return new TrainingRecommendation(
                     WorkoutType.RECOVERY_RUN,
                     3,
-                    "Your energy seems very low today. Consider a gentle recovery run."
+                    "You reported very low energy today. Consider a gentle recovery run."
             );
         }
 
@@ -30,7 +32,7 @@ public class RecommendationService {
             return new TrainingRecommendation(
                     WorkoutType.RECOVERY_RUN,
                     3,
-                    "You had very little sleep. A gentle recovery run may be the best option today."
+                    "You reported fewer than five hours of sleep. A gentle recovery run may be a good option today."
             );
         }
 
@@ -47,15 +49,22 @@ public class RecommendationService {
                     WorkoutType.EASY_RUN,
                     5,
                     "You slept less than usual. An easy run at a comfortable effort could be a good choice."
-
             );
         }
 
-        if (dailyCheckIn.getEnergyLevel() == EnergyLevel.LOW || dailyCheckIn.getSleepQuality() == SleepQuality.BAD) {
+        if (dailyCheckIn.getEnergyLevel() == EnergyLevel.LOW) {
             return new TrainingRecommendation(
                     WorkoutType.EASY_RUN,
                     5,
-                    "Your energy or sleep suggests taking it easier today. A comfortable easy run may suit you."
+                    "You reported low energy today. An easy run at a comfortable effort may suit you."
+            );
+        }
+
+        if (dailyCheckIn.getSleepQuality() == SleepQuality.BAD) {
+            return new TrainingRecommendation(
+                    WorkoutType.EASY_RUN,
+                    5,
+                    "You reported poor sleep quality. An easy run at a comfortable effort may be a good option today."
             );
         }
 
@@ -87,7 +96,7 @@ public class RecommendationService {
         return new TrainingRecommendation(
                 WorkoutType.EASY_RUN,
                 6,
-                "Your readiness looks steady today. An easy run could help you maintain consistency."
+                "Your check-in suggests keeping the effort comfortable today. An easy run could be a good option."
         );
     }
 

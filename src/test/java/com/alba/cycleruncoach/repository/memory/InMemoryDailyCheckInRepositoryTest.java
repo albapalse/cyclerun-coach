@@ -6,6 +6,7 @@ import com.alba.cycleruncoach.domain.EnergyLevel;
 import com.alba.cycleruncoach.domain.SleepQuality;
 import com.alba.cycleruncoach.domain.Symptom;
 import com.alba.cycleruncoach.repository.DailyCheckInRepository;
+import com.alba.cycleruncoach.exception.DuplicateResourceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -27,18 +28,6 @@ class InMemoryDailyCheckInRepositoryTest {
     @BeforeEach
     void setUp() {
         dailyCheckInRepository = new InMemoryDailyCheckInRepository();
-    }
-
-    private DailyCheckIn createDailyCheckIn(Long id) {
-        return new DailyCheckIn(
-                id,
-                LocalDate.of(2026, 7, 23),
-                CyclePhase.LUTEAL,
-                EnergyLevel.LOW,
-                SleepQuality.GOOD,
-                Set.of(Symptom.FATIGUE),
-                7.5
-        );
     }
 
     @Test
@@ -63,11 +52,11 @@ class InMemoryDailyCheckInRepositoryTest {
         DailyCheckIn secondCheckIn = createDailyCheckIn(1L);
         dailyCheckInRepository.save(firstCheckIn);
 
-        assertThrows(IllegalArgumentException.class, () -> dailyCheckInRepository.save(secondCheckIn));
+        assertThrows(DuplicateResourceException.class, () -> dailyCheckInRepository.save(secondCheckIn));
     }
 
     @Test
-    void findAll_returnsEmptyList_whenNoDailyCheckInsExist() {
+    void findById_returnsEmpty_whenDailyCheckInDoesNotExist() {
         Optional<DailyCheckIn> result = dailyCheckInRepository.findById(99L);
 
         assertTrue(result.isEmpty());
@@ -187,5 +176,16 @@ class InMemoryDailyCheckInRepositoryTest {
 
         assertFalse(updated);
         assertTrue(dailyCheckInRepository.findAll().isEmpty());
+    }
+    private DailyCheckIn createDailyCheckIn(Long id) {
+        return new DailyCheckIn(
+                id,
+                LocalDate.of(2026, 7, 23),
+                CyclePhase.LUTEAL,
+                EnergyLevel.LOW,
+                SleepQuality.GOOD,
+                Set.of(Symptom.FATIGUE),
+                7.5
+        );
     }
 }

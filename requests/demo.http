@@ -1,0 +1,94 @@
+@baseUrl = http://localhost:8080
+@checkInId = 1001
+@workoutId = 2001
+@missingId = 999999
+
+### 1. Confirm that a new demo database has no workouts
+GET {{baseUrl}}/api/workouts
+Accept: application/json
+
+### 2. Show 404 before creating a check-in
+GET {{baseUrl}}/api/recommendations/latest
+Accept: application/json
+
+### 3. Create a daily check-in with favorable readiness
+POST {{baseUrl}}/api/check-ins
+Content-Type: application/json
+
+{
+  "id": {{checkInId}},
+  "date": "2026-09-16",
+  "cyclePhase": "FOLLICULAR",
+  "energyLevel": "HIGH",
+  "sleepQuality": "GOOD",
+  "symptoms": [],
+  "sleepHours": 7.5
+}
+
+### 4. Generate a recommendation from the latest check-in
+GET {{baseUrl}}/api/recommendations/latest
+Accept: application/json
+
+### 5. Record the workout that was actually completed
+POST {{baseUrl}}/api/workouts
+Content-Type: application/json
+
+{
+  "id": {{workoutId}},
+  "date": "2026-09-16",
+  "distanceKm": 8.0,
+  "durationMinutes": 48,
+  "perceivedEffort": 7,
+  "workoutType": "TEMPO_RUN",
+  "cyclePhase": "FOLLICULAR"
+}
+
+### 6. Retrieve the saved workout
+GET {{baseUrl}}/api/workouts/{{workoutId}}
+Accept: application/json
+
+### 7. Show a validation error
+POST {{baseUrl}}/api/workouts
+Content-Type: application/json
+
+{
+  "id": 2002,
+  "date": "2026-09-16",
+  "distanceKm": 0,
+  "durationMinutes": 30,
+  "perceivedEffort": 5,
+  "workoutType": "EASY_RUN",
+  "cyclePhase": "FOLLICULAR"
+}
+
+### 8. Show a duplicate ID conflict
+POST {{baseUrl}}/api/check-ins
+Content-Type: application/json
+
+{
+  "id": {{checkInId}},
+  "date": "2026-09-16",
+  "cyclePhase": "FOLLICULAR",
+  "energyLevel": "HIGH",
+  "sleepQuality": "GOOD",
+  "symptoms": [],
+  "sleepHours": 7.5
+}
+
+### 9. Show a missing-resource response
+GET {{baseUrl}}/api/workouts/{{missingId}}
+Accept: application/json
+
+### 10. Delete the demo workout
+DELETE {{baseUrl}}/api/workouts/{{workoutId}}
+
+### 11. Delete the demo check-in
+DELETE {{baseUrl}}/api/check-ins/{{checkInId}}
+
+### 12. Confirm that the demo database is empty again
+GET {{baseUrl}}/api/workouts
+Accept: application/json
+
+### 13. Confirm that no recommendation can be created
+GET {{baseUrl}}/api/recommendations/latest
+Accept: application/json

@@ -2,7 +2,9 @@ package com.alba.cycleruncoach.controller.error;
 
 import com.alba.cycleruncoach.exception.DuplicateResourceException;
 import com.alba.cycleruncoach.exception.ResourceNotFoundException;
+
 import jakarta.servlet.http.HttpServletRequest;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
@@ -90,7 +92,7 @@ public class GlobalExceptionHandler {
 
         return buildResponse(
                 HttpStatus.BAD_REQUEST,
-                "Some request fields are invalid. Please review the field errors.",
+                "Some request values are invalid. Please review the details below.",
                 request.getRequestURI(),
                 fieldErrors
         );
@@ -116,6 +118,7 @@ public class GlobalExceptionHandler {
         Map<String, String> fieldErrors = new LinkedHashMap<>();
 
         exception.getParameterValidationResults().forEach(result -> {
+            // Request bodies expose field errors, while path and method parameters expose direct errors.
             if (result instanceof ParameterErrors errors) {
                 errors.getFieldErrors().forEach(fieldError ->
                         fieldErrors.putIfAbsent(
@@ -138,7 +141,7 @@ public class GlobalExceptionHandler {
 
         return buildResponse(
                 HttpStatus.BAD_REQUEST,
-                "Some request fields are invalid. Please review the field errors.",
+                "Some request values are invalid. Please review the details below.",
                 request.getRequestURI(),
                 fieldErrors
         );

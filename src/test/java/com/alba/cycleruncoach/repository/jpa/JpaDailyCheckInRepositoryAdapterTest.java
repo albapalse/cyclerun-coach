@@ -6,6 +6,7 @@ import com.alba.cycleruncoach.domain.EnergyLevel;
 import com.alba.cycleruncoach.domain.SleepQuality;
 import com.alba.cycleruncoach.domain.Symptom;
 import com.alba.cycleruncoach.repository.DailyCheckInRepository;
+import com.alba.cycleruncoach.exception.DuplicateResourceException;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
@@ -111,8 +112,8 @@ class JpaDailyCheckInRepositoryAdapterTest {
     void shouldRejectDuplicateId() {
         repository.save(createDailyCheckIn(1L));
 
-        IllegalArgumentException exception = assertThrows(
-                IllegalArgumentException.class,
+        DuplicateResourceException exception = assertThrows(
+                DuplicateResourceException.class,
                 () -> repository.save(createDailyCheckIn(1L))
         );
 

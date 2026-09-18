@@ -1,6 +1,6 @@
 package com.alba.cycleruncoach.exception;
 
-public class DuplicateResourceException extends IllegalArgumentException {
+public class DuplicateResourceException extends RuntimeException {
 
     public DuplicateResourceException(String message) {
         super(message);

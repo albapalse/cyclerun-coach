@@ -28,7 +28,7 @@ public record UpdateDailyCheckInRequest(
         @NotNull(message = "Please select a sleep quality.")
         SleepQuality sleepQuality,
 
-        @NotNull(message = "Please provide symptoms. Use an empty list if there are none.")
+        @NotNull(message = "Please include the symptoms field. Use an empty list if there are none.")
         Set<@NotNull(message = "Please remove empty symptom values.") Symptom> symptoms,
 
         @NotNull(message = "Please provide the number of hours slept.")

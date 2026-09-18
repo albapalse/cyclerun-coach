@@ -1,8 +1,8 @@
 package com.alba.cycleruncoach.repository.memory;
 
 import com.alba.cycleruncoach.domain.DailyCheckIn;
-import com.alba.cycleruncoach.repository.DailyCheckInRepository;
 import com.alba.cycleruncoach.exception.DuplicateResourceException;
+import com.alba.cycleruncoach.repository.DailyCheckInRepository;
 
 import java.util.ArrayList;
 import java.util.HashMap;

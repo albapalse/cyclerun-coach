@@ -1,26 +1,34 @@
 package com.alba.cycleruncoach.controller;
 
+import com.alba.cycleruncoach.controller.mapper.DailyCheckInDtoMapper;
 import com.alba.cycleruncoach.domain.CyclePhase;
 import com.alba.cycleruncoach.domain.DailyCheckIn;
 import com.alba.cycleruncoach.domain.EnergyLevel;
 import com.alba.cycleruncoach.domain.SleepQuality;
 import com.alba.cycleruncoach.domain.Symptom;
-import com.alba.cycleruncoach.service.DailyCheckInService;
 import com.alba.cycleruncoach.exception.DuplicateResourceException;
+import com.alba.cycleruncoach.service.DailyCheckInService;
 
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -31,17 +39,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.mockito.Mockito.doThrow;
-
-import com.alba.cycleruncoach.controller.mapper.DailyCheckInDtoMapper;
-import org.springframework.context.annotation.Import;
-
-import java.util.stream.Stream;
-
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import org.junit.jupiter.params.provider.ValueSource;
 
 @WebMvcTest(DailyCheckInController.class)
 @Import(DailyCheckInDtoMapper.class)
@@ -123,7 +120,7 @@ class DailyCheckInControllerTest {
                 .andExpect(jsonPath("$.status").value(404))
                 .andExpect(jsonPath("$.error").value("Not Found"))
                 .andExpect(jsonPath("$.message")
-                        .value("No daily check-ins are available yet."))
+                        .value("No daily check-in was found yet."))
                 .andExpect(jsonPath("$.path")
                         .value("/api/check-ins/latest"))
                 .andExpect(jsonPath("$.fieldErrors").isEmpty());
@@ -232,43 +229,6 @@ class DailyCheckInControllerTest {
                 .andExpect(jsonPath("$.fieldErrors").isEmpty());
     }
 
-    private DailyCheckIn createDailyCheckIn(Long id) {
-        return new DailyCheckIn(
-                id,
-                LocalDate.of(2026, 9, 8),
-                CyclePhase.FOLLICULAR,
-                EnergyLevel.HIGH,
-                SleepQuality.GOOD,
-                Set.of(Symptom.FATIGUE),
-                7.5
-        );
-    }
-
-    private static String dailyCheckInJson(Long id) {
-        return """
-                {
-                  "id": %d,
-                  "date": "2026-09-08",
-                  "cyclePhase": "FOLLICULAR",
-                  "energyLevel": "HIGH",
-                  "sleepQuality": "GOOD",
-                  "symptoms": ["FATIGUE"],
-                  "sleepHours": 7.5
-                }
-                """.formatted(id);
-    }
-    private String updateDailyCheckInJson() {
-        return """
-            {
-              "date": "2026-09-08",
-              "cyclePhase": "FOLLICULAR",
-              "energyLevel": "HIGH",
-              "sleepQuality": "GOOD",
-              "symptoms": ["FATIGUE"],
-              "sleepHours": 7.5
-            }
-            """;
-    }
 
     @ParameterizedTest(name = "{0}")
     @MethodSource("invalidCreateDailyCheckInRequests")
@@ -311,6 +271,40 @@ class DailyCheckInControllerTest {
                 .saveDailyCheckIn(any(DailyCheckIn.class));
     }
 
+    @Test
+    void createDailyCheckIn_returnsConflict_whenIdAlreadyExists()
+            throws Exception {
+        doThrow(new DuplicateResourceException(
+                "A daily check-in with ID 1 already exists. Please use a different ID."
+        )).when(dailyCheckInService)
+                .saveDailyCheckIn(any(DailyCheckIn.class));
+
+        mockMvc.perform(post("/api/check-ins")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(dailyCheckInJson(1L)))
+                .andExpect(status().isConflict())
+                .andExpect(jsonPath("$.timestamp").exists())
+                .andExpect(jsonPath("$.status").value(409))
+                .andExpect(jsonPath("$.error").value("Conflict"))
+                .andExpect(jsonPath("$.message")
+                        .value("A daily check-in with ID 1 already exists. Please use a different ID."))
+                .andExpect(jsonPath("$.path")
+                        .value("/api/check-ins"))
+                .andExpect(jsonPath("$.fieldErrors").isEmpty());
+    }
+
+    @Test
+    void findDailyCheckInById_returnsBadRequest_whenIdIsNotPositive()
+            throws Exception {
+        mockMvc.perform(get("/api/check-ins/0"))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value(400))
+                .andExpect(jsonPath("$.error").value("Bad Request"))
+                .andExpect(jsonPath("$.message")
+                        .value("Some request values are invalid. Please review the details below."))
+                .andExpect(jsonPath("$.path")
+                        .value("/api/check-ins/0"));
+    }
     private static Stream<Arguments> invalidCreateDailyCheckInRequests() {
         String validRequest = dailyCheckInJson(1L);
 
@@ -377,40 +371,41 @@ class DailyCheckInControllerTest {
                 )
         );
     }
-
-    @Test
-    void createDailyCheckIn_returnsConflict_whenIdAlreadyExists()
-            throws Exception {
-        doThrow(new DuplicateResourceException(
-                "A daily check-in with ID 1 already exists. Please use a different ID."
-        )).when(dailyCheckInService)
-                .saveDailyCheckIn(any(DailyCheckIn.class));
-
-        mockMvc.perform(post("/api/check-ins")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(dailyCheckInJson(1L)))
-                .andExpect(status().isConflict())
-                .andExpect(jsonPath("$.timestamp").exists())
-                .andExpect(jsonPath("$.status").value(409))
-                .andExpect(jsonPath("$.error").value("Conflict"))
-                .andExpect(jsonPath("$.message")
-                        .value("A daily check-in with ID 1 already exists. Please use a different ID."))
-                .andExpect(jsonPath("$.path")
-                        .value("/api/check-ins"))
-                .andExpect(jsonPath("$.fieldErrors").isEmpty());
+    private DailyCheckIn createDailyCheckIn(Long id) {
+        return new DailyCheckIn(
+                id,
+                LocalDate.of(2026, 9, 8),
+                CyclePhase.FOLLICULAR,
+                EnergyLevel.HIGH,
+                SleepQuality.GOOD,
+                Set.of(Symptom.FATIGUE),
+                7.5
+        );
     }
 
-
-    @Test
-    void findDailyCheckInById_returnsBadRequest_whenIdIsNotPositive()
-            throws Exception {
-        mockMvc.perform(get("/api/check-ins/0"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.error").value("Bad Request"))
-                .andExpect(jsonPath("$.message")
-                        .value("Some request fields are invalid. Please review the field errors."))
-                .andExpect(jsonPath("$.path")
-                        .value("/api/check-ins/0"));
+    private static String dailyCheckInJson(Long id) {
+        return """
+                {
+                  "id": %d,
+                  "date": "2026-09-08",
+                  "cyclePhase": "FOLLICULAR",
+                  "energyLevel": "HIGH",
+                  "sleepQuality": "GOOD",
+                  "symptoms": ["FATIGUE"],
+                  "sleepHours": 7.5
+                }
+                """.formatted(id);
+    }
+    private String updateDailyCheckInJson() {
+        return """
+            {
+              "date": "2026-09-08",
+              "cyclePhase": "FOLLICULAR",
+              "energyLevel": "HIGH",
+              "sleepQuality": "GOOD",
+              "symptoms": ["FATIGUE"],
+              "sleepHours": 7.5
+            }
+            """;
     }
 }

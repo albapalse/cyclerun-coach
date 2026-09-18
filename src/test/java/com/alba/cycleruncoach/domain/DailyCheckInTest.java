@@ -231,6 +231,22 @@ class DailyCheckInTest {
     }
 
     @Test
+    void constructor_throwsException_whenSleepHoursAreNotFinite() {
+        assertThrows(IllegalArgumentException.class, () -> createCheckIn(
+                1L, VALID_DATE, VALID_CYCLE_PHASE, VALID_ENERGY_LEVEL,
+                VALID_SLEEP_QUALITY, VALID_SYMPTOMS, Double.NaN
+        ));
+        assertThrows(IllegalArgumentException.class, () -> createCheckIn(
+                1L, VALID_DATE, VALID_CYCLE_PHASE, VALID_ENERGY_LEVEL,
+                VALID_SLEEP_QUALITY, VALID_SYMPTOMS, Double.POSITIVE_INFINITY
+        ));
+        assertThrows(IllegalArgumentException.class, () -> createCheckIn(
+                1L, VALID_DATE, VALID_CYCLE_PHASE, VALID_ENERGY_LEVEL,
+                VALID_SLEEP_QUALITY, VALID_SYMPTOMS, Double.NEGATIVE_INFINITY
+        ));
+    }
+
+    @Test
     void constructor_acceptsZeroSleepHours() {
         DailyCheckIn checkIn = createCheckIn(
                 1L,

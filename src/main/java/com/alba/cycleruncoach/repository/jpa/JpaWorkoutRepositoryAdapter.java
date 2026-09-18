@@ -1,12 +1,13 @@
 package com.alba.cycleruncoach.repository.jpa;
 
 import com.alba.cycleruncoach.domain.Workout;
-import com.alba.cycleruncoach.repository.WorkoutRepository;
-import org.springframework.stereotype.Repository;
 import com.alba.cycleruncoach.exception.DuplicateResourceException;
+import com.alba.cycleruncoach.repository.WorkoutRepository;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class JpaWorkoutRepositoryAdapter implements WorkoutRepository {
