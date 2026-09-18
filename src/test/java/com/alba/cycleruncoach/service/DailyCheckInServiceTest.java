@@ -125,29 +125,26 @@ class DailyCheckInServiceTest {
     }
 
     @Test
+    void findLatestDailyCheckIn_usesHighestId_whenDatesMatch() {
+        DailyCheckIn lowerId =
+                createDailyCheckIn(1L, LocalDate.of(2026, 7, 24));
+        DailyCheckIn higherId =
+                createDailyCheckIn(2L, LocalDate.of(2026, 7, 24));
+
+        dailyCheckInService.saveDailyCheckIn(lowerId);
+        dailyCheckInService.saveDailyCheckIn(higherId);
+
+        DailyCheckIn result =
+                dailyCheckInService.findLatestDailyCheckIn().orElseThrow();
+
+        assertSame(higherId, result);
+    }
+
+    @Test
     void findLatestDailyCheckIn_returnsEmpty_whenNoCheckInsExist() {
         Optional<DailyCheckIn> result = dailyCheckInService.findLatestDailyCheckIn();
 
         assertTrue(result.isEmpty());
-    }
-
-    private DailyCheckIn createDailyCheckIn(Long id) {
-        return createDailyCheckIn(id, LocalDate.of(2026, 7, 24));
-    }
-
-    private DailyCheckIn createDailyCheckIn(
-            Long id,
-            LocalDate date
-    ) {
-        return new DailyCheckIn(
-                id,
-                date,
-                CyclePhase.LUTEAL,
-                EnergyLevel.LOW,
-                SleepQuality.GOOD,
-                Set.of(Symptom.FATIGUE),
-                7.5
-        );
     }
 
     @Test
@@ -180,5 +177,23 @@ class DailyCheckInServiceTest {
 
         assertFalse(updated);
         assertTrue(dailyCheckInService.findAllDailyCheckIns().isEmpty());
+    }
+    private DailyCheckIn createDailyCheckIn(Long id) {
+        return createDailyCheckIn(id, LocalDate.of(2026, 7, 24));
+    }
+
+    private DailyCheckIn createDailyCheckIn(
+            Long id,
+            LocalDate date
+    ) {
+        return new DailyCheckIn(
+                id,
+                date,
+                CyclePhase.LUTEAL,
+                EnergyLevel.LOW,
+                SleepQuality.GOOD,
+                Set.of(Symptom.FATIGUE),
+                7.5
+        );
     }
 }

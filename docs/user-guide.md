@@ -356,10 +356,10 @@ Example validation error:
   "timestamp": "2026-09-16T08:00:00Z",
   "status": 400,
   "error": "Bad Request",
-  "message": "Some request fields are invalid. Please review the field errors.",
+  "message": "Some request values are invalid. Please review the details below.",
   "path": "/api/workouts",
   "fieldErrors": {
-    "distanceKm": "Distance must be greater than zero"
+    "distanceKm": "Please enter a distance greater than zero."
   }
 }
 ```

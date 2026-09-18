@@ -1,10 +1,10 @@
 package com.alba.cycleruncoach.domain;
 
-import org.junit.jupiter.api.Test;
-
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
+
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -14,67 +14,56 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class WorkoutTest {
 
+    private static final Long VALID_ID = 111L;
+    private static final LocalDate VALID_DATE = LocalDate.of(2026, 7, 1);
+    private static final double VALID_DISTANCE = 10.0;
+    private static final int VALID_DURATION = 60;
+    private static final int VALID_EFFORT = 5;
+    private static final WorkoutType VALID_TYPE = WorkoutType.EASY_RUN;
+    private static final CyclePhase VALID_PHASE = CyclePhase.FOLLICULAR;
+
     @Test
     void constructor_createsWorkoutWithValidData() {
-        Workout workout = new Workout(
-                111L,
-                LocalDate.of(2026, 7, 1),
-                5.0,
-                30,
-                3,
+        Workout workout = createWorkout(
+                VALID_ID,
+                VALID_DATE,
+                VALID_DISTANCE,
+                VALID_DURATION,
+                VALID_EFFORT,
                 WorkoutType.INTERVALS,
-                CyclePhase.FOLLICULAR
+                VALID_PHASE
         );
-        assertEquals(111, workout.getId());
-        assertEquals(LocalDate.of(2026, 7, 1), workout.getDate());
-        assertEquals(5.0, workout.getDistanceKm(), 0.001);
-        assertEquals(30, workout.getDurationMinutes());
-        assertEquals(3, workout.getPerceivedEffort());
-        assertEquals(CyclePhase.FOLLICULAR, workout.getCyclePhase());
+
+        assertEquals(VALID_ID, workout.getId());
+        assertEquals(VALID_DATE, workout.getDate());
+        assertEquals(VALID_DISTANCE, workout.getDistanceKm());
+        assertEquals(VALID_DURATION, workout.getDurationMinutes());
+        assertEquals(VALID_EFFORT, workout.getPerceivedEffort());
         assertEquals(WorkoutType.INTERVALS, workout.getWorkoutType());
+        assertEquals(VALID_PHASE, workout.getCyclePhase());
     }
 
     @Test
     void calculatePace_returnsMinutesPerKilometer() {
-        Workout workout = new Workout(
-                111L,
-                LocalDate.of(2026, 7, 1),
-                10.0,
-                60,
-                5,
-                WorkoutType.INTERVALS,
-                CyclePhase.FOLLICULAR
-        );
+        Workout workout = createValidWorkout();
 
-        double pace = workout.calculatePace();
-
-        assertEquals(6.0, pace, 0.001);
+        assertEquals(6.0, workout.calculatePace());
     }
 
     @Test
     void calculateTrainingLoad_returnsDistanceMultipliedByEffort() {
-        Workout workout = new Workout(
-                111L,
-                LocalDate.of(2026, 7, 1),
-                10.0,
-                60,
-                5,
-                WorkoutType.INTERVALS,
-                CyclePhase.FOLLICULAR
-        );
+        Workout workout = createValidWorkout();
 
-        int trainingLoad = workout.calculateTrainingLoad();
-
-        assertEquals(50, trainingLoad);
+        assertEquals(50, workout.calculateTrainingLoad());
     }
 
     @Test
-    void isHighIntensity_returnsTrue() {
-        Workout workout = new Workout(
-                111L,
-                LocalDate.of(2026, 7, 1),
-                10,
-                60,
+    void isHighIntensity_returnsTrue_whenEffortIsHigh() {
+        Workout workout = createWorkout(
+                VALID_ID,
+                VALID_DATE,
+                VALID_DISTANCE,
+                VALID_DURATION,
                 8,
                 WorkoutType.LONG_RUN,
                 CyclePhase.MENSTRUAL
@@ -84,184 +73,279 @@ class WorkoutTest {
     }
 
     @Test
-    void isHighIntensity_returnsFalse() {
-        Workout workout = new Workout(
-                111L,
-                LocalDate.of(2026, 7, 1),
-                10,
-                60,
+    void isHighIntensity_returnsTrue_whenWorkoutTypeIsIntervals() {
+        Workout workout = createWorkout(
+                VALID_ID,
+                VALID_DATE,
+                VALID_DISTANCE,
+                VALID_DURATION,
                 5,
-                WorkoutType.EASY_RUN,
-                CyclePhase.MENSTRUAL
+                WorkoutType.INTERVALS,
+                VALID_PHASE
         );
 
-        assertFalse(workout.isHighIntensity());
+        assertTrue(workout.isHighIntensity());
     }
 
     @Test
-    void constructor_createsWorkoutWithTypeAndCyclePhase() {
-        Workout workout = new Workout(111L,
-                LocalDate.of(2026, 7, 1),
-                10.0,
-                60,
-                5,
-                WorkoutType.EASY_RUN,
-                CyclePhase.FOLLICULAR
-        );
-
-        assertEquals(WorkoutType.EASY_RUN, workout.getWorkoutType());
-        assertEquals(CyclePhase.FOLLICULAR, workout.getCyclePhase());
+    void isHighIntensity_returnsFalse_forEasyRunWithModerateEffort() {
+        assertFalse(createValidWorkout().isHighIntensity());
     }
 
     @Test
     void constructor_throwsException_whenIdIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Workout(
-                    null,
-                    LocalDate.of(2025, 7, 1),
-                    10.0,
-                    60,
-                    5,
-                    WorkoutType.INTERVALS,
-                    CyclePhase.FOLLICULAR
-            );
-        });
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> createWorkout(
+                        null, VALID_DATE, VALID_DISTANCE, VALID_DURATION,
+                        VALID_EFFORT, VALID_TYPE, VALID_PHASE
+                )
+        );
     }
 
     @Test
     void constructor_throwsException_whenIdIsZero() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Workout(
-                    0L,
-                    LocalDate.of(2025, 7, 1),
-                    10.0,
-                    60,
-                    5,
-                    WorkoutType.INTERVALS,
-                    CyclePhase.FOLLICULAR
-            );
-        });
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> createWorkout(
+                        0L, VALID_DATE, VALID_DISTANCE, VALID_DURATION,
+                        VALID_EFFORT, VALID_TYPE, VALID_PHASE
+                )
+        );
     }
 
     @Test
     void constructor_throwsException_whenIdIsNegative() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Workout(
-                    -1L,
-                    LocalDate.of(2025, 7, 1),
-                    10.0,
-                    60,
-                    5,
-                    WorkoutType.INTERVALS,
-                    CyclePhase.FOLLICULAR
-            );
-        });
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> createWorkout(
+                        -1L, VALID_DATE, VALID_DISTANCE, VALID_DURATION,
+                        VALID_EFFORT, VALID_TYPE, VALID_PHASE
+                )
+        );
     }
-
 
     @Test
     void constructor_throwsException_whenDateIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Workout(111L,null, 10.0, 60, 5, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
-        });
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> createWorkout(
+                        VALID_ID, null, VALID_DISTANCE, VALID_DURATION,
+                        VALID_EFFORT, VALID_TYPE, VALID_PHASE
+                )
+        );
     }
 
     @Test
     void constructor_throwsException_whenDistanceIsZero() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Workout(111L, LocalDate.of(2026, 7, 1), 0.0, 60, 5,  WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
-        });
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> createWorkout(
+                        VALID_ID, VALID_DATE, 0.0, VALID_DURATION,
+                        VALID_EFFORT, VALID_TYPE, VALID_PHASE
+                )
+        );
     }
 
     @Test
     void constructor_throwsException_whenDistanceIsNegative() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Workout(111L, LocalDate.of(2026, 7, 1), -10.0, 60, 5,  WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
-        });
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> createWorkout(
+                        VALID_ID, VALID_DATE, -1.0, VALID_DURATION,
+                        VALID_EFFORT, VALID_TYPE, VALID_PHASE
+                )
+        );
+    }
+
+    @Test
+    void constructor_throwsException_whenDistanceIsNotFinite() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> createWorkout(
+                        VALID_ID, VALID_DATE, Double.NaN, VALID_DURATION,
+                        VALID_EFFORT, VALID_TYPE, VALID_PHASE
+                )
+        );
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> createWorkout(
+                        VALID_ID, VALID_DATE, Double.POSITIVE_INFINITY,
+                        VALID_DURATION, VALID_EFFORT, VALID_TYPE, VALID_PHASE
+                )
+        );
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> createWorkout(
+                        VALID_ID, VALID_DATE, Double.NEGATIVE_INFINITY,
+                        VALID_DURATION, VALID_EFFORT, VALID_TYPE, VALID_PHASE
+                )
+        );
     }
 
     @Test
     void constructor_throwsException_whenDurationIsZero() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Workout(111L, LocalDate.of( 2026, 7, 1), 10.0, 0, 5, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
-        });
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> createWorkout(
+                        VALID_ID, VALID_DATE, VALID_DISTANCE, 0,
+                        VALID_EFFORT, VALID_TYPE, VALID_PHASE
+                )
+        );
     }
 
     @Test
     void constructor_throwsException_whenDurationIsNegative() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Workout(111L, LocalDate.of(2026, 7, 1), 10.0, -60, 5,   WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
-        });
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> createWorkout(
+                        VALID_ID, VALID_DATE, VALID_DISTANCE, -1,
+                        VALID_EFFORT, VALID_TYPE, VALID_PHASE
+                )
+        );
     }
 
     @Test
     void constructor_throwsException_whenPerceivedEffortIsLowerThanOne() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Workout(111L, LocalDate.of(2026, 7, 1), 10.0, 60, 0,WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
-        });
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> createWorkout(
+                        VALID_ID, VALID_DATE, VALID_DISTANCE, VALID_DURATION,
+                        0, VALID_TYPE, VALID_PHASE
+                )
+        );
     }
 
     @Test
     void constructor_throwsException_whenPerceivedEffortIsGreaterThanTen() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Workout(111L, LocalDate.of(2026, 7, 1), 10.0, 60, 11, WorkoutType.INTERVALS, CyclePhase.FOLLICULAR);
-        });
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> createWorkout(
+                        VALID_ID, VALID_DATE, VALID_DISTANCE, VALID_DURATION,
+                        11, VALID_TYPE, VALID_PHASE
+                )
+        );
     }
 
     @Test
-    void constructor_throwsException_whenWorkoutTypeIsInvalid() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Workout(111L, LocalDate.of(2026,7,1), 10.0, 60, 5, null, CyclePhase.FOLLICULAR);
-        });
-
+    void constructor_throwsException_whenWorkoutTypeIsNull() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> createWorkout(
+                        VALID_ID, VALID_DATE, VALID_DISTANCE, VALID_DURATION,
+                        VALID_EFFORT, null, VALID_PHASE
+                )
+        );
     }
 
     @Test
-    void constructor_throwsException_whenCyclePhaseIsInvalid() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            new Workout(111L, LocalDate.of(2026,7,1), 10.0, 60, 5, WorkoutType.INTERVALS, null);
-        });
-
+    void constructor_throwsException_whenCyclePhaseIsNull() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> createWorkout(
+                        VALID_ID, VALID_DATE, VALID_DISTANCE, VALID_DURATION,
+                        VALID_EFFORT, VALID_TYPE, null
+                )
+        );
     }
 
     @Test
-    void equals_returnsTrue() {
-        Workout workout1 = new Workout(111L, LocalDate.of(2026,7,9),12,70,8,WorkoutType.INTERVALS,CyclePhase.LUTEAL);
-        Workout workout2 = new Workout(111L, LocalDate.of(2026,7,9),12,70,8,WorkoutType.INTERVALS,CyclePhase.LUTEAL);
+    void equals_returnsTrue_whenIdsMatch() {
+        Workout firstWorkout = createValidWorkout();
+        Workout secondWorkout = createWorkout(
+                VALID_ID,
+                LocalDate.of(2026, 7, 10),
+                5.0,
+                35,
+                3,
+                WorkoutType.RECOVERY_RUN,
+                CyclePhase.LUTEAL
+        );
 
-        assertEquals(workout1, workout2);
-
+        assertEquals(firstWorkout, secondWorkout);
     }
 
     @Test
-    void equals_returnsFalse() {
-        Workout workout1 = new Workout(111L, LocalDate.of(2026,7,6),12,75,8,WorkoutType.INTERVALS,CyclePhase.LUTEAL);
-        Workout workout2 = new Workout(123L, LocalDate.of(2026,7,9),12,70,9,WorkoutType.INTERVALS,CyclePhase.LUTEAL);
+    void equals_returnsFalse_whenIdsDiffer() {
+        Workout firstWorkout = createValidWorkout();
+        Workout secondWorkout = createWorkout(
+                123L,
+                VALID_DATE,
+                VALID_DISTANCE,
+                VALID_DURATION,
+                VALID_EFFORT,
+                VALID_TYPE,
+                VALID_PHASE
+        );
 
-        assertNotEquals(workout1, workout2);
-
+        assertNotEquals(firstWorkout, secondWorkout);
     }
+
     @Test
-    void hashCode_returnsSameValue_whenWorkoutsAreEqual() {
-        Workout workout1 = new Workout(111L, LocalDate.of(2026,7,9),12,70,8,WorkoutType.INTERVALS,CyclePhase.LUTEAL);
-        Workout workout2 = new Workout(111L, LocalDate.of(2026,7,9),12,70,8,WorkoutType.INTERVALS,CyclePhase.LUTEAL);
+    void hashCode_returnsSameValue_whenIdsMatch() {
+        Workout firstWorkout = createValidWorkout();
+        Workout secondWorkout = createWorkout(
+                VALID_ID,
+                LocalDate.of(2026, 7, 10),
+                5.0,
+                35,
+                3,
+                WorkoutType.RECOVERY_RUN,
+                CyclePhase.LUTEAL
+        );
 
-        assertEquals(workout1.hashCode(), workout2.hashCode());
-
+        assertEquals(firstWorkout.hashCode(), secondWorkout.hashCode());
     }
 
     @Test
-    void hashSet_keepsOnlyOneWorkout() {
-
-        Workout workout1 = new Workout(111L, LocalDate.of(2026,7,9),12,70,8,WorkoutType.INTERVALS,CyclePhase.LUTEAL);
-        Workout workout2 = new Workout(111L, LocalDate.of(2026,7,9),12,70,8,WorkoutType.INTERVALS,CyclePhase.LUTEAL);
+    void hashSet_keepsOnlyOneWorkout_whenIdsMatch() {
+        Workout firstWorkout = createValidWorkout();
+        Workout secondWorkout = createWorkout(
+                VALID_ID,
+                LocalDate.of(2026, 7, 10),
+                5.0,
+                35,
+                3,
+                WorkoutType.RECOVERY_RUN,
+                CyclePhase.LUTEAL
+        );
 
         Set<Workout> workouts = new HashSet<>();
-        workouts.add(workout1);
-        workouts.add(workout2);
+        workouts.add(firstWorkout);
+        workouts.add(secondWorkout);
 
         assertEquals(1, workouts.size());
-
     }
 
+    private Workout createValidWorkout() {
+        return createWorkout(
+                VALID_ID,
+                VALID_DATE,
+                VALID_DISTANCE,
+                VALID_DURATION,
+                VALID_EFFORT,
+                VALID_TYPE,
+                VALID_PHASE
+        );
+    }
+
+    private Workout createWorkout(
+            Long id,
+            LocalDate date,
+            double distanceKm,
+            int durationMinutes,
+            int perceivedEffort,
+            WorkoutType workoutType,
+            CyclePhase cyclePhase
+    ) {
+        return new Workout(
+                id,
+                date,
+                distanceKm,
+                durationMinutes,
+                perceivedEffort,
+                workoutType,
+                cyclePhase
+        );
+    }
 }

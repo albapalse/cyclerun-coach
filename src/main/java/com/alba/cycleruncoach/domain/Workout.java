@@ -80,7 +80,7 @@ public class Workout {
     }
 
     private void validateDistanceKm(double distanceKm) {
-        if (distanceKm <= 0) {
+        if (!Double.isFinite(distanceKm) || distanceKm <= 0) {
             throw new IllegalArgumentException("Distance must be greater than zero");
         }
     }
@@ -136,24 +136,11 @@ public class Workout {
 
         Workout workout = (Workout) o;
 
-        // The id is intentionally excluded: workouts are equal when their training data matches.
-        return Double.compare(workout.distanceKm, distanceKm) == 0
-                && durationMinutes == workout.durationMinutes
-                && perceivedEffort == workout.perceivedEffort
-                && Objects.equals(date, workout.date)
-                && workoutType == workout.workoutType
-                && cyclePhase == workout.cyclePhase;
+        return Objects.equals(id, workout.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(
-                date,
-                distanceKm,
-                durationMinutes,
-                perceivedEffort,
-                workoutType,
-                cyclePhase
-        );
+        return Objects.hash(id);
     }
 }

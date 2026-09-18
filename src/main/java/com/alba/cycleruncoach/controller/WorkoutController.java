@@ -1,10 +1,17 @@
 package com.alba.cycleruncoach.controller;
 
+import com.alba.cycleruncoach.controller.dto.CreateWorkoutRequest;
+import com.alba.cycleruncoach.controller.dto.UpdateWorkoutRequest;
+import com.alba.cycleruncoach.controller.dto.WorkoutResponse;
+import com.alba.cycleruncoach.controller.mapper.WorkoutDtoMapper;
 import com.alba.cycleruncoach.domain.Workout;
-import com.alba.cycleruncoach.service.WorkoutService;
 import com.alba.cycleruncoach.exception.ResourceNotFoundException;
+import com.alba.cycleruncoach.service.WorkoutService;
 
 import java.util.List;
+
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Positive;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,12 +23,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import com.alba.cycleruncoach.controller.dto.CreateWorkoutRequest;
-import com.alba.cycleruncoach.controller.dto.WorkoutResponse;
-import com.alba.cycleruncoach.controller.mapper.WorkoutDtoMapper;
-import com.alba.cycleruncoach.controller.dto.UpdateWorkoutRequest;
-import jakarta.validation.Valid;
-import jakarta.validation.constraints.Positive;
 
 @RestController
 @RequestMapping("/api/workouts")
@@ -94,6 +95,7 @@ public class WorkoutController {
                 workoutDtoMapper.toResponse(workout)
         );
     }
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteWorkout(
             @PathVariable @Positive(message = "Please use an ID greater than zero.") Long id

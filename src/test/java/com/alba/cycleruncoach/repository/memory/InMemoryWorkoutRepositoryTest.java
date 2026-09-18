@@ -3,6 +3,7 @@ package com.alba.cycleruncoach.repository.memory;
 import com.alba.cycleruncoach.domain.CyclePhase;
 import com.alba.cycleruncoach.domain.Workout;
 import com.alba.cycleruncoach.domain.WorkoutType;
+import com.alba.cycleruncoach.exception.DuplicateResourceException;
 import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
@@ -221,6 +222,7 @@ class InMemoryWorkoutRepositoryTest {
 
         assertTrue(deleted);
     }
+
     @Test
     void deleteById_returnsFalse_whenWorkoutDoesNotExist() {
         InMemoryWorkoutRepository repository = new InMemoryWorkoutRepository();
@@ -228,5 +230,65 @@ class InMemoryWorkoutRepositoryTest {
         boolean deleted = repository.deleteById(99L);
 
         assertFalse(deleted);
+    }
+
+    @Test
+    void save_throwsException_whenWorkoutIsNull() {
+        InMemoryWorkoutRepository repository = new InMemoryWorkoutRepository();
+
+        assertThrows(IllegalArgumentException.class, () -> repository.save(null));
+    }
+
+    @Test
+    void save_throwsException_whenIdAlreadyExists() {
+        InMemoryWorkoutRepository repository = new InMemoryWorkoutRepository();
+        Workout firstWorkout = createWorkout(111L);
+        Workout duplicateWorkout = createWorkout(111L);
+        repository.save(firstWorkout);
+
+        assertThrows(
+                DuplicateResourceException.class,
+                () -> repository.save(duplicateWorkout)
+        );
+    }
+
+    @Test
+    void update_throwsException_whenWorkoutIsNull() {
+        InMemoryWorkoutRepository repository = new InMemoryWorkoutRepository();
+
+        assertThrows(IllegalArgumentException.class, () -> repository.update(null));
+    }
+
+    @Test
+    void deleteById_throwsException_whenIdIsInvalid() {
+        InMemoryWorkoutRepository repository = new InMemoryWorkoutRepository();
+
+        assertThrows(IllegalArgumentException.class, () -> repository.deleteById(null));
+        assertThrows(IllegalArgumentException.class, () -> repository.deleteById(0L));
+        assertThrows(IllegalArgumentException.class, () -> repository.deleteById(-1L));
+    }
+
+    @Test
+    void findAll_returnsCopyOfInternalCollection() {
+        InMemoryWorkoutRepository repository = new InMemoryWorkoutRepository();
+        Workout workout = createWorkout(111L);
+        repository.save(workout);
+
+        List<Workout> result = repository.findAll();
+        result.clear();
+
+        assertEquals(List.of(workout), repository.findAll());
+    }
+
+    private Workout createWorkout(Long id) {
+        return new Workout(
+                id,
+                LocalDate.of(2026, 7, 1),
+                8.0,
+                48,
+                7,
+                WorkoutType.EASY_RUN,
+                CyclePhase.FOLLICULAR
+        );
     }
 }

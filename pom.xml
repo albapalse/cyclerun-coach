@@ -6,7 +6,7 @@
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
         <version>4.1.0</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <relativePath/>
     </parent>
     <groupId>com.alba</groupId>
     <artifactId>cyclerun-coach</artifactId>
@@ -110,6 +110,7 @@
 
     <build>
         <plugins>
+            <!-- These plugins run Mockito as an explicit agent because recent JDKs restrict dynamic agent loading. -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>

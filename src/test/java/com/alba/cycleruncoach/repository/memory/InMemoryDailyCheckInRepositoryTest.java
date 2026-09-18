@@ -30,18 +30,6 @@ class InMemoryDailyCheckInRepositoryTest {
         dailyCheckInRepository = new InMemoryDailyCheckInRepository();
     }
 
-    private DailyCheckIn createDailyCheckIn(Long id) {
-        return new DailyCheckIn(
-                id,
-                LocalDate.of(2026, 7, 23),
-                CyclePhase.LUTEAL,
-                EnergyLevel.LOW,
-                SleepQuality.GOOD,
-                Set.of(Symptom.FATIGUE),
-                7.5
-        );
-    }
-
     @Test
     void save_storesDailyCheckIn() {
         DailyCheckIn checkIn = createDailyCheckIn(1L);
@@ -68,7 +56,7 @@ class InMemoryDailyCheckInRepositoryTest {
     }
 
     @Test
-    void findAll_returnsEmptyList_whenNoDailyCheckInsExist() {
+    void findById_returnsEmpty_whenDailyCheckInDoesNotExist() {
         Optional<DailyCheckIn> result = dailyCheckInRepository.findById(99L);
 
         assertTrue(result.isEmpty());
@@ -188,5 +176,16 @@ class InMemoryDailyCheckInRepositoryTest {
 
         assertFalse(updated);
         assertTrue(dailyCheckInRepository.findAll().isEmpty());
+    }
+    private DailyCheckIn createDailyCheckIn(Long id) {
+        return new DailyCheckIn(
+                id,
+                LocalDate.of(2026, 7, 23),
+                CyclePhase.LUTEAL,
+                EnergyLevel.LOW,
+                SleepQuality.GOOD,
+                Set.of(Symptom.FATIGUE),
+                7.5
+        );
     }
 }

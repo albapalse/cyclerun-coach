@@ -1,12 +1,13 @@
 package com.alba.cycleruncoach.repository.jpa;
 
 import com.alba.cycleruncoach.domain.DailyCheckIn;
-import com.alba.cycleruncoach.repository.DailyCheckInRepository;
-import org.springframework.stereotype.Repository;
 import com.alba.cycleruncoach.exception.DuplicateResourceException;
+import com.alba.cycleruncoach.repository.DailyCheckInRepository;
 
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.stereotype.Repository;
 
 @Repository
 public class JpaDailyCheckInRepositoryAdapter

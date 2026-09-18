@@ -117,7 +117,7 @@ public class DailyCheckIn {
     }
 
     private void validateSleepHours(double sleepHours) {
-        if (sleepHours < 0 || sleepHours > 24) {
+        if (!Double.isFinite(sleepHours) || sleepHours < 0 || sleepHours > 24) {
             throw new IllegalArgumentException("Sleep hours must be between 0 and 24");
         }
     }

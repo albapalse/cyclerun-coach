@@ -40,7 +40,10 @@ public class DailyCheckInService {
     }
 
     public Optional<DailyCheckIn> findLatestDailyCheckIn() {
-        return dailyCheckInRepository.findAll().stream().max(Comparator.comparing(DailyCheckIn::getDate));
+        return dailyCheckInRepository.findAll()
+                .stream()
+                .max(Comparator.comparing(DailyCheckIn::getDate)
+                        .thenComparing(DailyCheckIn::getId));
     }
 
     private void validateRepository(DailyCheckInRepository dailyCheckInRepository) {

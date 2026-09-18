@@ -3,14 +3,15 @@ package com.alba.cycleruncoach.service;
 import com.alba.cycleruncoach.domain.CyclePhase;
 import com.alba.cycleruncoach.domain.Workout;
 import com.alba.cycleruncoach.domain.WorkoutType;
+import com.alba.cycleruncoach.exception.DuplicateResourceException;
 import com.alba.cycleruncoach.repository.WorkoutRepository;
 import com.alba.cycleruncoach.repository.memory.InMemoryWorkoutRepository;
-import com.alba.cycleruncoach.exception.DuplicateResourceException;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -21,6 +22,7 @@ class WorkoutServiceTest {
 
     private WorkoutService workoutService;
     private WorkoutRepository workoutRepository;
+
     @BeforeEach
     void setUp() {
         workoutRepository = new InMemoryWorkoutRepository();
@@ -29,18 +31,16 @@ class WorkoutServiceTest {
 
     @Test
     void constructor_throwsException_whenRepositoryIsNull() {
-      assertThrows(IllegalArgumentException.class, () -> new WorkoutService(null));
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> new WorkoutService(null)
+        );
     }
+
     @Test
     void saveWorkout_savesWorkoutInRepository() {
-        Workout workout = new Workout(777L,
-                LocalDate.of(2026, 7, 3),
-                8.0,
-                48,
-                7,
-                WorkoutType.EASY_RUN,
-                CyclePhase.FOLLICULAR
-        );
+        Workout workout = createWorkout(777L);
+
         workoutService.saveWorkout(workout);
 
         assertEquals(workout, workoutRepository.findAll().get(0));
@@ -48,20 +48,17 @@ class WorkoutServiceTest {
 
     @Test
     void saveWorkout_throwsException_whenWorkoutIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> workoutService.saveWorkout(null));
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> workoutService.saveWorkout(null)
+        );
     }
 
     @Test
-    void save_throwsException_whenIdAlreadyExists() {
-        Workout workout = new Workout(777L,
-                LocalDate.of(2026, 7, 3),
-                8.0,
-                48,
-                7,
-                WorkoutType.EASY_RUN,
-                CyclePhase.FOLLICULAR
-        );
-        Workout workout1 = new Workout(777L,
+    void saveWorkout_throwsException_whenIdAlreadyExists() {
+        Workout firstWorkout = createWorkout(777L);
+        Workout duplicateWorkout = new Workout(
+                777L,
                 LocalDate.of(2026, 7, 2),
                 8.0,
                 48,
@@ -69,118 +66,66 @@ class WorkoutServiceTest {
                 WorkoutType.EASY_RUN,
                 CyclePhase.FOLLICULAR
         );
-        workoutService.saveWorkout(workout);
-        assertThrows(DuplicateResourceException.class, () -> workoutService.saveWorkout(workout1));
+        workoutService.saveWorkout(firstWorkout);
+
+        assertThrows(
+                DuplicateResourceException.class,
+                () -> workoutService.saveWorkout(duplicateWorkout)
+        );
     }
 
     @Test
     void findAllWorkouts_returnsSavedWorkouts() {
-        Workout workout = new Workout(777L,
-                LocalDate.of(2026, 7, 3),
-                8.0,
-                48,
-                7,
-                WorkoutType.EASY_RUN,
-                CyclePhase.FOLLICULAR
-        );
-        Workout workout2 = new Workout(666L,
-                LocalDate.of(2026, 7, 2),
-                10.0,
-                65,
-                8,
-                WorkoutType.LONG_RUN,
-                CyclePhase.FOLLICULAR
-        );
-        workoutService.saveWorkout(workout);
-        workoutService.saveWorkout(workout2);
-        List<Workout> workouts = workoutService.findAllWorkouts();
-        assertEquals(2, workouts.size());
+        Workout firstWorkout = createWorkout(777L);
+        Workout secondWorkout = createWorkout(666L);
+        workoutService.saveWorkout(firstWorkout);
+        workoutService.saveWorkout(secondWorkout);
 
+        List<Workout> workouts = workoutService.findAllWorkouts();
+
+        assertEquals(List.of(firstWorkout, secondWorkout), workouts);
     }
 
     @Test
-    void findAll_returnsDefensiveCopy() {
-        Workout workout = new Workout(777L,
-                LocalDate.of(2026, 7, 3),
-                8.0,
-                48,
-                7,
-                WorkoutType.EASY_RUN,
-                CyclePhase.FOLLICULAR
-        );
-        Workout workout2 = new Workout(666L,
-                LocalDate.of(2026, 7, 2),
-                10.0,
-                65,
-                8,
-                WorkoutType.LONG_RUN,
-                CyclePhase.FOLLICULAR
-        );
-        workoutService.saveWorkout(workout);
-        workoutService.saveWorkout(workout2);
+    void findAllWorkouts_returnsDefensiveCopy() {
+        Workout firstWorkout = createWorkout(777L);
+        Workout secondWorkout = createWorkout(666L);
+        workoutService.saveWorkout(firstWorkout);
+        workoutService.saveWorkout(secondWorkout);
+
         List<Workout> workouts = workoutService.findAllWorkouts();
-        workouts.removeAll(workoutService.findAllWorkouts());
+        workouts.clear();
 
         assertEquals(2, workoutService.findAllWorkouts().size());
     }
 
     @Test
-    void findWorkoutById_returnsWorkout_whenWorkoutExists(){
-        Workout workout = new Workout(777L,
-                LocalDate.of(2026, 7, 3),
-                8.0,
-                48,
-                7,
-                WorkoutType.EASY_RUN,
-                CyclePhase.FOLLICULAR
-        );
-        Workout workout2 = new Workout(666L,
-                LocalDate.of(2026, 7, 2),
-                10.0,
-                65,
-                8,
-                WorkoutType.LONG_RUN,
-                CyclePhase.FOLLICULAR
-        );
+    void findWorkoutById_returnsWorkout_whenWorkoutExists() {
+        Workout workout = createWorkout(777L);
         workoutService.saveWorkout(workout);
-        workoutService.saveWorkout(workout2);
-        Workout foundWorkout = workoutService.findWorkoutById(777L).orElseThrow();
-        assertEquals(workout, foundWorkout);
 
+        Workout foundWorkout =
+                workoutService.findWorkoutById(777L).orElseThrow();
+
+        assertEquals(workout, foundWorkout);
     }
 
     @Test
     void findWorkoutById_returnsEmpty_whenWorkoutDoesNotExist() {
-
-        Workout workout = new Workout(666L,
-                LocalDate.of(2026, 7, 2),
-                10.0,
-                65,
-                8,
-                WorkoutType.LONG_RUN,
-                CyclePhase.FOLLICULAR
-        );
-        workoutService.saveWorkout(workout);
         assertTrue(workoutService.findWorkoutById(777L).isEmpty());
-
     }
 
     @Test
-    void findById_throwsException_whenIdIsNull() {
-        assertThrows(IllegalArgumentException.class, () -> workoutService.findWorkoutById(null));
+    void findWorkoutById_throwsException_whenIdIsNull() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> workoutService.findWorkoutById(null)
+        );
     }
 
     @Test
     void updateWorkout_updatesWorkout_whenWorkoutExists() {
-        Workout originalWorkout = new Workout(
-                777L,
-                LocalDate.of(2026, 7, 3),
-                8.0,
-                48,
-                5,
-                WorkoutType.EASY_RUN,
-                CyclePhase.FOLLICULAR
-        );
+        Workout originalWorkout = createWorkout(777L);
         Workout updatedWorkout = new Workout(
                 777L,
                 LocalDate.of(2026, 7, 3),
@@ -203,17 +148,7 @@ class WorkoutServiceTest {
 
     @Test
     void updateWorkout_returnsFalse_whenWorkoutDoesNotExist() {
-        Workout workout = new Workout(
-                777L,
-                LocalDate.of(2026, 7, 3),
-                8.0,
-                48,
-                5,
-                WorkoutType.EASY_RUN,
-                CyclePhase.FOLLICULAR
-        );
-
-        boolean updated = workoutService.updateWorkout(workout);
+        boolean updated = workoutService.updateWorkout(createWorkout(777L));
 
         assertFalse(updated);
         assertTrue(workoutService.findAllWorkouts().isEmpty());
@@ -221,8 +156,31 @@ class WorkoutServiceTest {
 
     @Test
     void deleteWorkoutById_deletesWorkout_whenWorkoutExists() {
+        Workout workout = createWorkout(777L);
+        workoutService.saveWorkout(workout);
 
-        Workout workout = new Workout(777L,
+        boolean deleted = workoutService.deleteWorkoutById(777L);
+
+        assertTrue(deleted);
+        assertTrue(workoutService.findWorkoutById(777L).isEmpty());
+    }
+
+    @Test
+    void deleteWorkoutById_returnsFalse_whenWorkoutDoesNotExist() {
+        assertFalse(workoutService.deleteWorkoutById(777L));
+    }
+
+    @Test
+    void deleteWorkoutById_throwsException_whenIdIsNull() {
+        assertThrows(
+                IllegalArgumentException.class,
+                () -> workoutService.deleteWorkoutById(null)
+        );
+    }
+
+    private Workout createWorkout(Long id) {
+        return new Workout(
+                id,
                 LocalDate.of(2026, 7, 3),
                 8.0,
                 48,
@@ -230,23 +188,5 @@ class WorkoutServiceTest {
                 WorkoutType.EASY_RUN,
                 CyclePhase.FOLLICULAR
         );
-
-        workoutService.saveWorkout(workout);
-
-        assertTrue(workoutService.deleteWorkoutById(777L));
-        assertTrue(workoutService.findWorkoutById(777L).isEmpty());
-
-    }
-
-    @Test
-    void deleteWorkoutById_returnsFalse_whenWorkoutDoesNotExist() {
-
-        assertFalse(workoutService.deleteWorkoutById(777L));
-
-    }
-
-    @Test
-    void deleteById_throwsException_whenIdIsNull()  {
-        assertThrows(IllegalArgumentException.class, () -> workoutService.deleteWorkoutById(null));
     }
 }

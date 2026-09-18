@@ -8,7 +8,7 @@ a simple recommendation for the next training session.
 
 ## About the project
 
-I started CycleRun Coach as a way to practise Java and Spring Boot while working
+I started CycleRun Coach as a way to practice Java and Spring Boot while working
 on an idea related to running and women's health.
 
 The project started with a small domain model for workouts. I gradually added
@@ -52,7 +52,7 @@ locally and is not currently deployed as a public service.
 - MockMvc
 - Git and GitHub
 
-## How the project is organised
+## How the project is organized
 
 I separated the project into layers so that each part has a clear
 responsibility.
@@ -154,10 +154,10 @@ more than the current phase.
 | 3 | One or more symptoms are reported | `EASY_RUN` | 4 |
 | 4 | Sleep is below 7 hours | `EASY_RUN` | 5 |
 | 5 | Energy is `LOW` or sleep quality is `BAD` | `EASY_RUN` | 5 |
-| 6 | Readiness is favourable | Depends on cycle phase | Depends on phase |
+| 6 | Readiness is favorable | Depends on cycle phase | Depends on phase |
 | 7 | None of the previous rules apply | `EASY_RUN` | 6 |
 
-For readiness to be considered favourable, the check-in must have:
+For readiness to be considered favorable, the check-in must have:
 
 - `HIGH` or `VERY_HIGH` energy;
 - `GOOD` or `EXCELLENT` sleep quality;
@@ -288,10 +288,10 @@ Errors use the same response structure throughout the API:
   "timestamp": "2026-09-16T08:00:00Z",
   "status": 400,
   "error": "Bad Request",
-  "message": "Some request fields are invalid. Please review the field errors.",
+  "message": "Some request values are invalid. Please review the details below.",
   "path": "/api/workouts",
   "fieldErrors": {
-    "distanceKm": "Distance must be greater than zero"
+    "distanceKm": "Please enter a distance greater than zero."
   }
 }
 ```
@@ -366,12 +366,12 @@ Run a clean build and verification with:
 ./mvnw clean verify
 ```
 
-The current test suite contains 192 automated tests covering:
+The test suite contains more than 190 automated tests covering:
 
-- domain validation and behaviour;
+- domain validation and behavior;
 - recommendation rules and their priority;
 - services using in-memory repositories;
-- in-memory repository behaviour;
+- in-memory repository behavior;
 - JPA repository adapters;
 - web controllers with MockMvc;
 - validation and error responses;
@@ -389,6 +389,7 @@ Ready-to-run IntelliJ HTTP Client requests are available in:
 requests/workouts.http
 requests/daily-check-ins.http
 requests/recommendations.http
+requests/demo.http
 ```
 
 A more detailed walkthrough is available in the
@@ -398,7 +399,7 @@ A more detailed walkthrough is available in the
 
 For a short demonstration of the project, I use this sequence:
 
-1. Start the application with the local profile.
+1. Start the application with the demo profile: `SPRING_PROFILES_ACTIVE=demo ./mvnw spring-boot:run`.
 2. Create a daily check-in.
 3. Request the latest recommendation.
 4. Explain which rule produced the recommendation.
@@ -439,16 +440,6 @@ records one.
 Some check-in conditions are more important than others. Using an explicit
 order makes that priority clear and makes each rule easier to test.
 
-### Remove the unused user model
-
-An earlier version of the project included a `User` class with its own workout
-collection. The API later moved to repository-based persistence and did not
-have authentication or user ownership.
-
-I removed that model from the first release because it represented an older
-architecture and created a second source of workout data. User accounts will be
-designed again when authentication is implemented properly.
-
 ## Current limitations
 
 I kept the scope of the first version deliberately small:
@@ -464,13 +455,13 @@ I kept the scope of the first version deliberately small:
 - the API is not publicly deployed.
 
 Because authentication and data ownership are not implemented, shared testing
-should use fictional or anonymised data.
+should use fictional or anonymized data.
 
 ## Possible next steps
 
 Some improvements I would like to explore after the first release are:
 
-- authentication and authorisation;
+- authentication and authorization;
 - separate data for each user;
 - database-generated IDs;
 - PostgreSQL;
@@ -509,6 +500,7 @@ I can use for that learning.
 - [Workout HTTP requests](requests/workouts.http)
 - [Daily check-in HTTP requests](requests/daily-check-ins.http)
 - [Recommendation HTTP request](requests/recommendations.http)
+- [Complete demo flow](requests/demo.http)
 
 ## License
 

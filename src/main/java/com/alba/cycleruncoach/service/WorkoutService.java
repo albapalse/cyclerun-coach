@@ -1,4 +1,5 @@
 package com.alba.cycleruncoach.service;
+
 import com.alba.cycleruncoach.domain.Workout;
 import com.alba.cycleruncoach.repository.WorkoutRepository;
 
@@ -28,6 +29,7 @@ public class WorkoutService {
     public Optional<Workout> findWorkoutById(Long id) {
         return workoutRepository.findById(id);
     }
+
     public boolean updateWorkout(Workout workout) {
         return workoutRepository.update(workout);
     }

@@ -1,8 +1,8 @@
 package com.alba.cycleruncoach.repository.memory;
 
 import com.alba.cycleruncoach.domain.Workout;
-import com.alba.cycleruncoach.repository.WorkoutRepository;
 import com.alba.cycleruncoach.exception.DuplicateResourceException;
+import com.alba.cycleruncoach.repository.WorkoutRepository;
 
 import java.util.ArrayList;
 import java.util.List;

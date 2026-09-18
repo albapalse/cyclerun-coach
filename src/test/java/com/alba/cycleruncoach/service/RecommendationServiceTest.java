@@ -52,7 +52,7 @@ class RecommendationServiceTest {
         );
         assertEquals(3, recommendation.maxPerceivedEffort());
         assertEquals(
-                "Your energy seems very low today. Consider a gentle recovery run.",
+                "You reported very low energy today. Consider a gentle recovery run.",
                 recommendation.reason()
         );
     }
@@ -76,7 +76,7 @@ class RecommendationServiceTest {
         );
         assertEquals(3, recommendation.maxPerceivedEffort());
         assertEquals(
-                "You had very little sleep. A gentle recovery run may be the best option today.",
+                "You reported fewer than five hours of sleep. A gentle recovery run may be a good option today.",
                 recommendation.reason()
         );
     }
@@ -151,7 +151,7 @@ class RecommendationServiceTest {
         );
         assertEquals(5, recommendation.maxPerceivedEffort());
         assertEquals(
-                "Your energy or sleep suggests taking it easier today. A comfortable easy run may suit you.",
+                "You reported low energy today. An easy run at a comfortable effort may suit you.",
                 recommendation.reason()
         );
     }
@@ -175,7 +175,7 @@ class RecommendationServiceTest {
         );
         assertEquals(5, recommendation.maxPerceivedEffort());
         assertEquals(
-                "Your energy or sleep suggests taking it easier today. A comfortable easy run may suit you.",
+                "You reported poor sleep quality. An easy run at a comfortable effort may be a good option today.",
                 recommendation.reason()
         );
     }
@@ -199,7 +199,7 @@ class RecommendationServiceTest {
         );
         assertEquals(6, recommendation.maxPerceivedEffort());
         assertEquals(
-                "Your readiness looks steady today. An easy run could help you maintain consistency.",
+                "Your check-in suggests keeping the effort comfortable today. An easy run could be a good option.",
                 recommendation.reason()
         );
     }
@@ -223,7 +223,7 @@ class RecommendationServiceTest {
         );
         assertEquals(6, recommendation.maxPerceivedEffort());
         assertEquals(
-                "Your readiness looks steady today. An easy run could help you maintain consistency.",
+                "Your check-in suggests keeping the effort comfortable today. An easy run could be a good option.",
                 recommendation.reason()
         );
     }
@@ -301,7 +301,7 @@ class RecommendationServiceTest {
         );
         assertEquals(3, recommendation.maxPerceivedEffort());
         assertEquals(
-                "Your energy seems very low today. Consider a gentle recovery run.",
+                "You reported very low energy today. Consider a gentle recovery run.",
                 recommendation.reason()
         );
     }
@@ -325,7 +325,7 @@ class RecommendationServiceTest {
         );
         assertEquals(3, recommendation.maxPerceivedEffort());
         assertEquals(
-                "You had very little sleep. A gentle recovery run may be the best option today.",
+                "You reported fewer than five hours of sleep. A gentle recovery run may be a good option today.",
                 recommendation.reason()
         );
     }

@@ -5,8 +5,8 @@ import com.alba.cycleruncoach.controller.dto.DailyCheckInResponse;
 import com.alba.cycleruncoach.controller.dto.UpdateDailyCheckInRequest;
 import com.alba.cycleruncoach.controller.mapper.DailyCheckInDtoMapper;
 import com.alba.cycleruncoach.domain.DailyCheckIn;
-import com.alba.cycleruncoach.service.DailyCheckInService;
 import com.alba.cycleruncoach.exception.ResourceNotFoundException;
+import com.alba.cycleruncoach.service.DailyCheckInService;
 
 import java.util.List;
 
@@ -53,7 +53,7 @@ public class DailyCheckInController {
         DailyCheckIn dailyCheckIn = dailyCheckInService
                 .findLatestDailyCheckIn()
                 .orElseThrow(() -> new ResourceNotFoundException(
-                        "No daily check-ins are available yet."
+                        "No daily check-in was found yet."
                 ));
 
         return ResponseEntity.ok(
